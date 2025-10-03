@@ -50,6 +50,7 @@ class Product(db.Model):
     ingredients = db.Column(db.Text)
     benefits = db.Column(db.Text)
     usage_instructions = db.Column(db.Text)
+    warnings = db.Column(db.Text)
     is_vegan = db.Column(db.Boolean, default=True)
     is_gmo_free = db.Column(db.Boolean, default=True)
     is_gluten_free = db.Column(db.Boolean, default=True)
@@ -57,6 +58,15 @@ class Product(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     reviews = db.relationship('Review', backref='product', lazy=True)
     order_items = db.relationship('OrderItem', backref='product', lazy=True)
+    faqs = db.relationship('ProductFAQ', backref='product', lazy=True)
+
+class ProductFAQ(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+    question = db.Column(db.String(500), nullable=False)
+    answer = db.Column(db.Text, nullable=False)
+    order = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Cart(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -220,6 +230,9 @@ def get_product(product_id):
     reviews = Review.query.filter_by(product_id=product_id).all()
     avg_rating = sum([r.rating for r in reviews]) / len(reviews) if reviews else 0
     
+    # Get FAQs
+    faqs = ProductFAQ.query.filter_by(product_id=product_id).order_by(ProductFAQ.order).all()
+    
     return jsonify({
         'id': product.id,
         'name': product.name,
@@ -233,13 +246,18 @@ def get_product(product_id):
         'ingredients': product.ingredients,
         'benefits': product.benefits,
         'usage_instructions': product.usage_instructions,
+        'warnings': product.warnings,
         'is_vegan': product.is_vegan,
         'is_gmo_free': product.is_gmo_free,
         'is_gluten_free': product.is_gluten_free,
         'stock_quantity': product.stock_quantity,
         'qr_code': product.qr_code,
         'average_rating': round(avg_rating, 1),
-        'review_count': len(reviews)
+        'review_count': len(reviews),
+        'faqs': [{
+            'question': faq.question,
+            'answer': faq.answer
+        } for faq in faqs]
     }), 200
 
 # Cart Routes
@@ -540,10 +558,90 @@ def send_contact_notification_email(data):
     """
     mail.send(msg)
 
+# Seed Data Function
+def seed_female_vitality_product():
+    """Add Female Vitality product to database"""
+    with app.app_context():
+        # Check if product already exists
+        existing = Product.query.filter_by(name='Female Vitality').first()
+        if existing:
+            print("Female Vitality product already exists")
+            return
+        
+        # Create Female Vitality product
+        female_vitality = Product(
+            name='Female Vitality',
+            description='''Experience renewed energy, enhanced mood, and optimal hormonal balance with our comprehensive female vitality supplement. Our carefully curated formula combines powerful antioxidants, essential vitamins, and minerals to support overall well-being and radiant health.
+
+Experience a balanced and harmonious life with our all-natural supplement designed to support women's overall health. Our unique blend of botanicals helps regulate boost energy levels, enhance your mood, immune function, and promote overall well-being.''',
+            short_description='Supports hormonal balance, rejuvenates physical and mental health, manages stress and anxiety, and supports immunity.',
+            price=1199.00,
+            sale_price=840.00,
+            category='Women\'s Health',
+            tags='hormonal balance,energy,mood,immunity,stress relief,women wellness',
+            image_url='/static/images/female-vitality.jpg',
+            stock_quantity=100,
+            ingredients='Ashwagandha- 80 mg, Shatavari (Asparagus racemosus)- 160 mg, Triphala- 60 mg, Maca root (Lepidium meyenii)- 40 mg and Damiana (Turnera diffusa)- 60 mg',
+            benefits='''• Supports Energy & Mood
+• Boosts Immunity
+• Natural Energy Supplement
+• Reduce Stress & Anxiety
+• Enhance Stamina & Endurance
+• Boost mood, focus, and overall sense of well-being
+• Supports Hormonal Balance
+• Rejuvenate Physical and Mental Health''',
+            usage_instructions='A healthy Adult can take one tablet twice a day with water or as advised by a physician or a healthcare professional.',
+            warnings='Keep out of reach of children. Do not take this or any other supplement if under the age of 18, pregnant or nursing a baby, or if you have any known or suspected medical conditions, and/or taking prescription drugs or over the counter medications. Always consult with a qualified health physician/Nutritionist before taking any new dietary supplement.',
+            is_vegan=True,
+            is_gmo_free=True,
+            is_gluten_free=True
+        )
+        
+        db.session.add(female_vitality)
+        db.session.flush()
+        
+        # Add FAQs for Female Vitality
+        faqs = [
+            {
+                'question': 'Who should take Female Vitality supplement?',
+                'answer': 'If your stamina is poor, feel lethargic most of the time, dealing with hormonal issues or have low libido then you should start consuming this product.',
+                'order': 1
+            },
+            {
+                'question': 'Can I take this supplement if I have medical conditions?',
+                'answer': 'It\'s best to consult your healthcare provider before using the product if you have any underlying medical conditions.',
+                'order': 2
+            },
+            {
+                'question': 'How long before I see results?',
+                'answer': 'Most women report noticeable improvements in energy and desire within 30 days, with full effects after 3 months of consistent use.',
+                'order': 3
+            },
+            {
+                'question': 'Does this help with stress and anxiety?',
+                'answer': 'Yes, it contains natural adaptogens like Ashwagandha, maca root and shatavari, known to suppress stress and anxiety which directly support hormonal balance and improve overall reproductive health.',
+                'order': 4
+            }
+        ]
+        
+        for faq_data in faqs:
+            faq = ProductFAQ(
+                product_id=female_vitality.id,
+                question=faq_data['question'],
+                answer=faq_data['answer'],
+                order=faq_data['order']
+            )
+            db.session.add(faq)
+        
+        db.session.commit()
+        print("Female Vitality product added successfully!")
+
 # Initialize database
 def create_tables():
     with app.app_context():
         db.create_all()
+        # Seed Female Vitality product
+        seed_female_vitality_product()
 
 if __name__ == '__main__':
     create_tables()
