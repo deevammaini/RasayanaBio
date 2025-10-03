@@ -9,7 +9,7 @@ import os
 from functools import wraps
 
 app = Flask(__name__)
-tydytdtydtyd
+
 # Configuration
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rasayanabio.db'
