@@ -558,6 +558,32 @@ def send_contact_notification_email(data):
     """
     mail.send(msg)
 
+# Database Migration Function
+def migrate_database():
+    """Add missing columns to existing database"""
+    with app.app_context():
+        try:
+            # Try to add warnings column if it doesn't exist
+            with db.engine.connect() as conn:
+                # Check if warnings column exists
+                result = conn.execute(db.text("PRAGMA table_info(product)"))
+                columns = [row[1] for row in result]
+                
+                if 'warnings' not in columns:
+                    print("Adding 'warnings' column to product table...")
+                    conn.execute(db.text("ALTER TABLE product ADD COLUMN warnings TEXT"))
+                    conn.commit()
+                    print("Column added successfully!")
+                
+                # Check if product_faq table exists
+                result = conn.execute(db.text("SELECT name FROM sqlite_master WHERE type='table' AND name='product_faq'"))
+                if not result.fetchone():
+                    print("Creating product_faq table...")
+                    db.create_all()
+                    print("Table created successfully!")
+        except Exception as e:
+            print(f"Migration note: {e}")
+
 # Seed Data Function
 def seed_female_vitality_product():
     """Add Female Vitality product to database"""
@@ -640,6 +666,8 @@ Experience a balanced and harmonious life with our all-natural supplement design
 def create_tables():
     with app.app_context():
         db.create_all()
+        # Run migration to add missing columns
+        migrate_database()
         # Seed Female Vitality product
         seed_female_vitality_product()
 
