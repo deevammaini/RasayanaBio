@@ -600,7 +600,15 @@ const Checkout = () => {
                               onChange={(e) => handlePaymentDetailsChange('wallet', 'walletType', e.target.value)}
                             />
                             <label htmlFor="phonepe" className="wallet-option-label">
-                              <div className="wallet-icon">📱</div>
+                              <div className="wallet-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                  <rect width="24" height="24" rx="4" fill="#5F259F"/>
+                                  <path d="M8 6h8v2H8V6zm0 3h8v2H8V9zm0 3h5v2H8v-2z" fill="white"/>
+                                  <circle cx="18" cy="6" r="2" fill="#FF6B35"/>
+                                  <circle cx="18" cy="12" r="2" fill="#00D4AA"/>
+                                  <circle cx="18" cy="18" r="2" fill="#FFD23F"/>
+                                </svg>
+                              </div>
                               PhonePe
                             </label>
                           </div>
@@ -614,7 +622,14 @@ const Checkout = () => {
                               onChange={(e) => handlePaymentDetailsChange('wallet', 'walletType', e.target.value)}
                             />
                             <label htmlFor="paytm" className="wallet-option-label">
-                              <div className="wallet-icon">💰</div>
+                              <div className="wallet-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                  <rect width="24" height="24" rx="4" fill="#002970"/>
+                                  <path d="M6 8h12v2H6V8zm0 3h12v2H6v-2zm0 3h8v2H6v-2z" fill="white"/>
+                                  <circle cx="18" cy="7" r="1.5" fill="#00BAF2"/>
+                                  <path d="M16.5 16.5L18 18l3-3" stroke="#00BAF2" strokeWidth="1.5" fill="none"/>
+                                </svg>
+                              </div>
                               Paytm
                             </label>
                           </div>
@@ -628,7 +643,14 @@ const Checkout = () => {
                               onChange={(e) => handlePaymentDetailsChange('wallet', 'walletType', e.target.value)}
                             />
                             <label htmlFor="gpay" className="wallet-option-label">
-                              <div className="wallet-icon">G</div>
+                              <div className="wallet-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                  <rect width="24" height="24" rx="4" fill="#4285F4"/>
+                                  <path d="M12 4c-4.4 0-8 3.6-8 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 14c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6z" fill="white"/>
+                                  <path d="M12 6c-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm0 10c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z" fill="#4285F4"/>
+                                  <path d="M12 8c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" fill="white"/>
+                                </svg>
+                              </div>
                               Google Pay
                             </label>
                           </div>

@@ -1346,6 +1346,99 @@ def seed_new_products():
             print("Hair Serum added successfully!")
         else:
             print("Hair Serum already exists")
+
+        # Check if Face Wash with Glutathione already exists
+        existing_face_wash = Product.query.filter_by(name='Face Wash with Glutathione').first()
+        if not existing_face_wash:
+            face_wash = Product(
+                name='Face Wash with Glutathione',
+                description='Gentle face wash enriched with glutathione, a powerful antioxidant that helps brighten skin tone, reduce dark spots, and promote healthy, glowing skin. Suitable for all skin types.',
+                short_description='Gentle face wash with glutathione for brighter, healthier skin.',
+                price=499.0,
+                sale_price=399.0,
+                category='Skin Care',
+                tags='face wash,glutathione,skin care,antioxidant,brightening,glowing skin',
+                image_url='/images/face-wash-glutathione.jpg',
+                stock_quantity=60,
+                ingredients='Glutathione, Vitamin C, Hyaluronic Acid, Aloe Vera, Green Tea Extract, Natural cleansers',
+                benefits='''• Brightens and evens skin tone
+• Reduces dark spots and hyperpigmentation
+• Provides antioxidant protection
+• Hydrates and moisturizes skin
+• Gentle cleansing for all skin types
+• Promotes healthy, glowing complexion''',
+                usage_instructions='Wet face with lukewarm water. Apply a small amount and gently massage in circular motions. Rinse thoroughly and pat dry.',
+                warnings='For external use only. Avoid contact with eyes. Discontinue use if irritation occurs. Use sunscreen during day.',
+                is_vegan=True,
+                is_gmo_free=True,
+                is_gluten_free=True
+            )
+            db.session.add(face_wash)
+            print("Face Wash with Glutathione added successfully!")
+        else:
+            print("Face Wash with Glutathione already exists")
+
+        # Check if Liver Care already exists
+        existing_liver_care = Product.query.filter_by(name='Liver Care').first()
+        if not existing_liver_care:
+            liver_care = Product(
+                name='Liver Care',
+                description='Comprehensive liver support supplement with milk thistle, turmeric, and other natural ingredients to promote liver health, detoxification, and overall wellness.',
+                short_description='Natural liver support supplement for detoxification and liver health.',
+                price=699.0,
+                sale_price=549.0,
+                category='Liver Health',
+                tags='liver care,liver health,detox,milk thistle,turmeric,liver support',
+                image_url='/images/liver-care.jpg',
+                stock_quantity=40,
+                ingredients='Milk Thistle Extract, Turmeric, Dandelion Root, Artichoke Extract, N-Acetyl Cysteine, Vitamin B Complex',
+                benefits='''• Supports healthy liver function
+• Promotes natural detoxification
+• Helps protect liver cells
+• Supports healthy digestion
+• Boosts energy and vitality
+• Maintains overall wellness''',
+                usage_instructions='Take 2 capsules daily with meals or as directed by a healthcare professional.',
+                warnings='Consult healthcare provider before use if pregnant, nursing, or taking medications. Keep out of reach of children.',
+                is_vegan=True,
+                is_gmo_free=True,
+                is_gluten_free=True
+            )
+            db.session.add(liver_care)
+            print("Liver Care added successfully!")
+        else:
+            print("Liver Care already exists")
+
+        # Check if PCOS Care already exists
+        existing_pcos_care = Product.query.filter_by(name='PCOS Care').first()
+        if not existing_pcos_care:
+            pcos_care = Product(
+                name='PCOS Care',
+                description='Comprehensive PCOS support supplement with inositol, chromium, and other natural ingredients to help manage PCOS symptoms, support hormonal balance, and promote overall reproductive health.',
+                short_description='Natural PCOS support supplement for hormonal balance and reproductive health.',
+                price=799.0,
+                sale_price=649.0,
+                category='Women\'s Health',
+                tags='pcos,women health,hormonal balance,inositol,chromium,reproductive health',
+                image_url='/images/pcos-care.jpg',
+                stock_quantity=35,
+                ingredients='Myo-Inositol, D-Chiro-Inositol, Chromium Picolinate, Vitamin D3, Folic Acid, Zinc, Magnesium, Vitex Extract',
+                benefits='''• Supports hormonal balance
+• Helps manage PCOS symptoms
+• Promotes regular menstrual cycles
+• Supports healthy insulin sensitivity
+• Aids in healthy weight management
+• Enhances reproductive health''',
+                usage_instructions='Take 2 capsules daily with meals or as directed by a healthcare professional.',
+                warnings='Consult healthcare provider before use if pregnant, nursing, or taking medications. Keep out of reach of children.',
+                is_vegan=True,
+                is_gmo_free=True,
+                is_gluten_free=True
+            )
+            db.session.add(pcos_care)
+            print("PCOS Care added successfully!")
+        else:
+            print("PCOS Care already exists")
         
         db.session.commit()
 

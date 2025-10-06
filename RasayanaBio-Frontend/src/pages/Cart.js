@@ -108,9 +108,10 @@ const Cart = () => {
       <div className="cart-page">
         <div className="container">
           <div className="empty-cart">
+            <div className="empty-cart-icon">🛒</div>
             <h2>Your cart is empty</h2>
             <p>Add some products to get started!</p>
-            <Link to="/products" className="btn-primary">Continue Shopping</Link>
+            <Link to="/products" className="btn-continue-shopping">Continue Shopping</Link>
           </div>
         </div>
       </div>
@@ -120,46 +121,73 @@ const Cart = () => {
   return (
     <div className="cart-page">
       <div className="container">
-        <h1>Shopping Cart</h1>
+        <div className="cart-header">
+          <h1>Shopping Cart</h1>
+          <p>Review your items and proceed to checkout</p>
+        </div>
         
         <div className="cart-content">
-          <div className="cart-items">
+          <div className="cart-items-section">
+            <div className="cart-items-title">Your Items</div>
             {cart.map(item => (
               <div key={item.id} className="cart-item">
-                <ProductImage 
-                  product={item.product} 
-                  className="cart-item-image" 
-                  size="card"
-                />
+                <div className="cart-item-image">
+                  <ProductImage 
+                    product={item.product} 
+                    className="cart-item-image" 
+                    size="card"
+                  />
+                </div>
                 <div className="item-details">
-                  <h3>{item.product.name}</h3>
+                  <div className="item-name">{item.product.name}</div>
                   <div className="pack-info">
                     <span className="pack-size">{item.pack_size} Bottle{item.pack_size !== '1' ? 's' : ''} Pack</span>
                     <span className="unit-price">{formatPrice(item.unit_price)} per pack</span>
                   </div>
+                  <div className="item-quantity">
+                    <button 
+                      className="quantity-btn"
+                      onClick={() => updateCartItem(item.id, item.quantity - 1)}
+                      disabled={item.quantity <= 1}
+                    >
+                      −
+                    </button>
+                    <span className="quantity-display">{item.quantity}</span>
+                    <button 
+                      className="quantity-btn"
+                      onClick={() => updateCartItem(item.id, item.quantity + 1)}
+                    >
+                      +
+                    </button>
+                  </div>
+                  <div className="pack-selector">
+                    <button 
+                      className={`pack-btn ${item.pack_size === '1' ? 'active' : ''}`}
+                      onClick={() => handlePackChange(item.id, '1')}
+                    >
+                      1 Bottle
+                    </button>
+                    <button 
+                      className={`pack-btn ${item.pack_size === '2' ? 'active' : ''}`}
+                      onClick={() => handlePackChange(item.id, '2')}
+                    >
+                      2 Bottles
+                    </button>
+                    <button 
+                      className={`pack-btn ${item.pack_size === '3' ? 'active' : ''}`}
+                      onClick={() => handlePackChange(item.id, '3')}
+                    >
+                      3 Bottles
+                    </button>
+                  </div>
                 </div>
-                <div className="item-quantity">
-                  <button onClick={() => updateCartItem(item.id, item.quantity - 1)}>-</button>
-                  <span>{item.quantity}</span>
-                  <button onClick={() => updateCartItem(item.id, item.quantity + 1)}>+</button>
-                </div>
-                <div className="pack-selector">
-                  <select 
-                    value={item.pack_size} 
-                    onChange={(e) => handlePackChange(item.id, e.target.value)}
-                    className="pack-dropdown"
-                  >
-                    <option value="1">1 Bottle</option>
-                    <option value="2">2 Bottles</option>
-                    <option value="3">3 Bottles</option>
-                  </select>
-                </div>
-                <div className="item-subtotal">
+                <div className="item-price">
                   {formatPrice(item.subtotal)}
                 </div>
                 <button 
-                  className="btn-remove" 
+                  className="remove-btn" 
                   onClick={() => removeFromCart(item.id)}
+                  title="Remove item"
                 >
                   ✕
                 </button>
@@ -167,12 +195,11 @@ const Cart = () => {
             ))}
           </div>
 
-          <div className="cart-summary">
-            <h2>Order Summary</h2>
+          <div className="cart-summary-section">
+            <div className="cart-summary-title">Order Summary</div>
             
             {/* Coupon Section */}
             <div className="coupon-section">
-              <h3>Coupon Code</h3>
               {appliedCoupon ? (
                 <div className="applied-coupon">
                   <div className="coupon-info">
@@ -180,22 +207,23 @@ const Cart = () => {
                     <span className="coupon-description">{appliedCoupon.description}</span>
                     <span className="coupon-discount">-{formatPrice(appliedCoupon.discount_amount)}</span>
                   </div>
-                  <button className="btn-remove-coupon" onClick={handleRemoveCoupon}>
+                  <button className="remove-coupon-btn" onClick={handleRemoveCoupon}>
                     Remove
                   </button>
                 </div>
               ) : (
                 <>
-                  <div className="coupon-input">
+                  <div className="coupon-input-group">
                     <input
                       type="text"
                       placeholder="Enter coupon code"
                       value={couponCode}
                       onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                       onKeyPress={(e) => e.key === 'Enter' && handleApplyCoupon()}
+                      className="coupon-input"
                     />
                     <button 
-                      className="btn-apply-coupon" 
+                      className="coupon-btn" 
                       onClick={handleApplyCoupon}
                       disabled={couponLoading}
                     >
@@ -204,9 +232,9 @@ const Cart = () => {
                   </div>
                   
                   {/* Available Coupons List */}
-                  <div className="available-coupons-section">
+                  <div className="available-coupons">
                     <button 
-                      className="btn-show-coupons"
+                      className="available-coupons-title"
                       onClick={() => setShowCouponList(!showCouponList)}
                     >
                       {showCouponList ? 'Hide Available Coupons' : 'Show Available Coupons'}
@@ -214,38 +242,16 @@ const Cart = () => {
                     
                     {showCouponList && (
                       <div className="available-coupons-list">
-                        <h4>Available Coupons:</h4>
                         {availableCoupons.map(coupon => {
                           const status = getCouponStatus(coupon);
                           return (
                             <div 
                               key={coupon.id} 
-                              className={`coupon-item ${status.status}`}
+                              className={`coupon-card ${status.status}`}
                               onClick={() => status.status === 'valid' && handleCouponSelect(coupon.code)}
                             >
-                              <div className="coupon-item-header">
-                                <span className="coupon-code">{coupon.code}</span>
-                                <span className={`coupon-status ${status.status}`}>
-                                  {status.message}
-                                </span>
-                              </div>
+                              <div className="coupon-code">{coupon.code}</div>
                               <div className="coupon-description">{coupon.description}</div>
-                              <div className="coupon-discount">
-                                {coupon.discount_type === 'percentage' 
-                                  ? `${coupon.discount_value}% off` 
-                                  : `₹${coupon.discount_value} off`
-                                }
-                                {coupon.min_order_amount > 0 && (
-                                  <span className="coupon-condition">
-                                    (Min order: ₹{coupon.min_order_amount})
-                                  </span>
-                                )}
-                                {coupon.min_quantity > 0 && (
-                                  <span className="coupon-condition">
-                                    (Min {coupon.min_quantity} items)
-                                  </span>
-                                )}
-                              </div>
                             </div>
                           );
                         })}
@@ -261,36 +267,43 @@ const Cart = () => {
               )}
             </div>
 
-            <div className="summary-row">
-              <span>Subtotal:</span>
-              <span>{formatPrice(cartSummary.subtotal)}</span>
-            </div>
-            {cartSummary.coupon_discount > 0 && (
-              <div className="summary-row discount">
-                <span>Coupon Discount:</span>
-                <span>-{formatPrice(cartSummary.coupon_discount)}</span>
+            <div className="order-totals">
+              <div className="total-row">
+                <span className="total-label">Subtotal:</span>
+                <span className="total-value">{formatPrice(cartSummary.subtotal)}</span>
               </div>
-            )}
-            <div className="summary-row">
-              <span>9% CGST:</span>
-              <span>{formatPrice(cartSummary.cgst)}</span>
+              {cartSummary.coupon_discount > 0 && (
+                <div className="total-row">
+                  <span className="total-label">Coupon Discount:</span>
+                  <span className="total-value discount-value">-{formatPrice(cartSummary.coupon_discount)}</span>
+                </div>
+              )}
+              <div className="total-row">
+                <span className="total-label">9% CGST:</span>
+                <span className="total-value tax-value">{formatPrice(cartSummary.cgst)}</span>
+              </div>
+              <div className="total-row">
+                <span className="total-label">9% SGST:</span>
+                <span className="total-value tax-value">{formatPrice(cartSummary.sgst)}</span>
+              </div>
+              <div className="total-row">
+                <span className="total-label">Shipping:</span>
+                <span className="total-value">Calculated at checkout</span>
+              </div>
+              <div className="total-row">
+                <span className="total-label">Total:</span>
+                <span className="total-value">{formatPrice(cartSummary.total)}</span>
+              </div>
             </div>
-            <div className="summary-row">
-              <span>9% SGST:</span>
-              <span>{formatPrice(cartSummary.sgst)}</span>
+            
+            <div className="cart-actions">
+              <Link to="/products" className="btn-continue-shopping">
+                Continue Shopping
+              </Link>
+              <button className="btn-checkout" onClick={handleCheckout}>
+                Proceed to Checkout
+              </button>
             </div>
-            <div className="summary-row">
-              <span>Shipping:</span>
-              <span>Calculated at checkout</span>
-            </div>
-            <div className="summary-row total">
-              <strong>Total:</strong>
-              <strong>{formatPrice(cartSummary.total)}</strong>
-            </div>
-            <button className="btn-checkout" onClick={handleCheckout}>
-              Proceed to Checkout
-            </button>
-            <Link to="/products" className="btn-continue">Continue Shopping</Link>
           </div>
         </div>
       </div>

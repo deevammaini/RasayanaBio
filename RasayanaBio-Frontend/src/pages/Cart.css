@@ -1,10 +1,10 @@
 /* ============================================
-   Modern Cart Page Styles
+   Modern Cart Page - Complete Redesign
    ============================================ */
 
 .cart-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   padding: 2rem 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
@@ -89,14 +89,14 @@
   width: 80px;
   height: 80px;
   border-radius: 16px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-weight: bold;
   font-size: 1.2rem;
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
 }
 
 .item-details {
@@ -153,8 +153,8 @@
 }
 
 .quantity-btn:hover {
-  border-color: #667eea;
-  color: #667eea;
+  border-color: #10b981;
+  color: #10b981;
   transform: translateY(-1px);
 }
 
@@ -190,20 +190,20 @@
 }
 
 .pack-btn:hover {
-  border-color: #667eea;
-  color: #667eea;
+  border-color: #10b981;
+  color: #10b981;
 }
 
 .pack-btn.active {
-  border-color: #667eea;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: #10b981;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
 }
 
 .item-price {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #667eea;
+  color: #10b981;
   text-align: right;
 }
 
@@ -287,12 +287,16 @@
 }
 
 .tax-value {
-  color: #667eea;
+  color: #10b981;
 }
 
 /* Coupon Section */
 .coupon-section {
   margin-bottom: 1.5rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #e2e8f0;
 }
 
 .coupon-input-group {
@@ -303,33 +307,43 @@
 
 .coupon-input {
   flex: 1;
-  padding: 0.75rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
   font-size: 0.9rem;
-  background: #f8fafc;
+  background: #ffffff;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .coupon-input:focus {
   outline: none;
-  border-color: #667eea;
-  background: white;
+  border-color: #10b981;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  transform: translateY(-1px);
+}
+
+.coupon-input::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
 }
 
 .coupon-btn {
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
   border: none;
-  border-radius: 8px;
-  font-weight: 500;
+  border-radius: 12px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .coupon-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
 }
 
 .coupon-btn:disabled {
@@ -372,10 +386,20 @@
 .available-coupons-title {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #4a5568;
+  color: #10b981;
   margin-bottom: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  transition: all 0.3s ease;
+}
+
+.available-coupons-title:hover {
+  color: #059669;
 }
 
 .coupon-card {
@@ -389,14 +413,14 @@
 }
 
 .coupon-card:hover {
-  border-color: #667eea;
+  border-color: #10b981;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
 }
 
 .coupon-code {
   font-weight: 600;
-  color: #667eea;
+  color: #10b981;
   font-size: 0.9rem;
 }
 
@@ -417,8 +441,8 @@
   flex: 1;
   padding: 1rem 2rem;
   background: white;
-  color: #667eea;
-  border: 2px solid #667eea;
+  color: #10b981;
+  border: 2px solid #10b981;
   border-radius: 12px;
   font-size: 1rem;
   font-weight: 600;
@@ -432,10 +456,10 @@
 }
 
 .btn-continue-shopping:hover {
-  background: #667eea;
+  background: #10b981;
   color: white;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
 }
 
 .btn-checkout {
@@ -502,7 +526,7 @@
   width: 20px;
   height: 20px;
   border: 2px solid #e2e8f0;
-  border-top: 2px solid #667eea;
+  border-top: 2px solid #10b981;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-right: 0.5rem;
