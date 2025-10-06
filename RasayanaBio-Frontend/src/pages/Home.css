@@ -2,6 +2,57 @@
   min-height: 100vh;
 }
 
+/* Modern animations and transitions */
+.hero {
+  animation: fadeInUp 1s ease-out;
+}
+
+.features-grid {
+  animation: fadeInUp 1.2s ease-out 0.2s both;
+}
+
+.best-sellers {
+  animation: fadeInUp 1.4s ease-out 0.4s both;
+}
+
+.product-card {
+  animation: fadeInUp 0.8s ease-out both;
+}
+
+.product-card:nth-child(1) { animation-delay: 0.1s; }
+.product-card:nth-child(2) { animation-delay: 0.2s; }
+.product-card:nth-child(3) { animation-delay: 0.3s; }
+.product-card:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
 .hero {
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   padding: 4rem 0;

@@ -1,55 +1,100 @@
 // ============================================
-// components/ProductCard.js
+// src/components/ProductCard.js - Modern React Product Card
 // ============================================
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { formatPrice } from '../utils/currency';
+import ProductImage from './ProductImage';
 import './ProductCard.css';
 
-const ProductCard = ({ product }) => {
+const ProductCard = memo(({ product }) => {
   const { addToCart } = useCart();
 
-  const handleAddToCart = async (e) => {
+  const handleAddToCart = useCallback(async (e) => {
     e.preventDefault();
-    const result = await addToCart(product.id);
-    if (result.success) {
-      alert('Product added to cart!');
+    try {
+      await addToCart(product.id);
+      alert('Added to cart!');
+    } catch (error) {
+      alert('Error adding to cart');
     }
-  };
+  }, [addToCart, product.id]);
 
   return (
-    <div className="product-card">
-      <Link to={`/products/${product.id}`}>
-        <div className="product-image">
-          <img src={product.image_url || '/placeholder.jpg'} alt={product.name} />
-          {product.sale_price && <span className="sale-badge">Sale</span>}
+    <article className="product-card" data-testid={`product-card-${product.id}`}>
+      {product.sale_price && (
+        <div className="sale-badge" aria-label="On Sale">
+          Sale
         </div>
-        <div className="product-info">
-          <div className="product-category">
-            {product.is_vegan && <span className="badge">🌿 Vegan</span>}
-            <span className="category">{product.category}</span>
-          </div>
-          <h3>{product.name}</h3>
-          <p className="description">{product.short_description}</p>
-          <div className="product-footer">
-            <div className="price">
-              {product.sale_price ? (
-                <>
-                  <span className="sale-price">${product.sale_price}</span>
-                  <span className="original-price">${product.price}</span>
-                </>
-              ) : (
-                <span className="current-price">${product.price}</span>
-              )}
+      )}
+      
+      <Link to={`/products/${product.id}`} className="product-link" aria-label={`View ${product.name} details`}>
+        <ProductImage 
+          product={product} 
+          className="product-card-image" 
+          size="card"
+        />
+        
+        <header className="product-header">
+          <h3 className="product-card-title">{product.name}</h3>
+        </header>
+        
+        <div className="product-card-price" role="text" aria-label={`Price: ${formatPrice(product.sale_price || product.price)}`}>
+          {product.sale_price ? (
+            <>
+              <div className="price-original">
+                <span className="strikethrough" aria-label={`Original price: ${formatPrice(product.price)}`}>
+                  {formatPrice(product.price)}
+                </span>
+                <span className="original-text">
+                  Original price was: {formatPrice(product.price)}.
+                </span>
+              </div>
+              <div className="price-current">
+                <span className="current-price" aria-label={`Current price: ${formatPrice(product.sale_price)}`}>
+                  {formatPrice(product.sale_price)}
+                </span>
+                <span className="current-text">
+                  Current price is: {formatPrice(product.sale_price)}.
+                </span>
+              </div>
+            </>
+          ) : (
+            <div className="price-current">
+              <span className="current-price">{formatPrice(product.price)}</span>
             </div>
-            <button onClick={handleAddToCart} className="btn-add-cart">
-              Add to Cart
-            </button>
-          </div>
+          )}
+        </div>
+
+        <div className="rating-section" aria-label="Product rating">
+          <div className="stars" role="img" aria-label="5 star rating">⭐⭐⭐⭐⭐</div>
+          <span className="rating-text">
+            Rated <strong>0</strong> out of 5
+          </span>
         </div>
       </Link>
-    </div>
+      
+      <footer className="product-actions">
+        <button 
+          onClick={handleAddToCart} 
+          className="btn-add-cart"
+          aria-label={`Add ${product.name} to cart`}
+        >
+          Add to cart
+        </button>
+        <Link 
+          to={`/products/${product.id}`} 
+          className="btn-buy-now"
+          aria-label={`Buy ${product.name} now`}
+        >
+          Buy Now
+        </Link>
+      </footer>
+    </article>
   );
-};
+});
+
+ProductCard.displayName = 'ProductCard';
 
 export default ProductCard;

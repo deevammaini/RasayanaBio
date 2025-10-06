@@ -5,6 +5,8 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { formatPrice } from '../utils/currency';
+import ProductImage from '../components/ProductImage';
 import './Cart.css';
 
 const Cart = () => {
@@ -43,10 +45,14 @@ const Cart = () => {
           <div className="cart-items">
             {cart.map(item => (
               <div key={item.id} className="cart-item">
-                <img src={item.product.image_url || '/placeholder.jpg'} alt={item.product.name} />
+                <ProductImage 
+                  product={item.product} 
+                  className="cart-item-image" 
+                  size="card"
+                />
                 <div className="item-details">
                   <h3>{item.product.name}</h3>
-                  <p className="item-price">${item.product.price}</p>
+                  <p className="item-price">{formatPrice(item.product.sale_price || item.product.price)}</p>
                 </div>
                 <div className="item-quantity">
                   <button onClick={() => updateCartItem(item.id, item.quantity - 1)}>-</button>
@@ -54,7 +60,7 @@ const Cart = () => {
                   <button onClick={() => updateCartItem(item.id, item.quantity + 1)}>+</button>
                 </div>
                 <div className="item-subtotal">
-                  ${item.subtotal.toFixed(2)}
+                  {formatPrice(item.subtotal)}
                 </div>
                 <button 
                   className="btn-remove" 
@@ -70,7 +76,7 @@ const Cart = () => {
             <h2>Order Summary</h2>
             <div className="summary-row">
               <span>Subtotal:</span>
-              <span>${cartTotal.toFixed(2)}</span>
+              <span>{formatPrice(cartTotal)}</span>
             </div>
             <div className="summary-row">
               <span>Shipping:</span>
@@ -78,7 +84,7 @@ const Cart = () => {
             </div>
             <div className="summary-row total">
               <strong>Total:</strong>
-              <strong>${cartTotal.toFixed(2)}</strong>
+              <strong>{formatPrice(cartTotal)}</strong>
             </div>
             <button className="btn-checkout" onClick={handleCheckout}>
               Proceed to Checkout

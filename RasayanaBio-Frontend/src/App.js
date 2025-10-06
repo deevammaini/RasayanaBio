@@ -17,6 +17,8 @@ import Orders from './pages/Orders';
 import OrderDetail from './pages/OrderDetail';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import TestCurrency from './components/TestCurrency';
+import WhatsAppButton from './components/WhatsAppButton';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import './App.css';
@@ -31,6 +33,7 @@ function App() {
             <main>
               <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/test" element={<TestCurrency />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/products/:id" element={<ProductDetail />} />
                 <Route path="/cart" element={<Cart />} />
@@ -43,12 +46,13 @@ function App() {
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
               </Routes>
-            </main>
-            <Footer />
-          </div>
-        </CartProvider>
-      </AuthProvider>
-    </Router>
+                    </main>
+                    <Footer />
+                    <WhatsAppButton />
+                  </div>
+                </CartProvider>
+              </AuthProvider>
+            </Router>
   );
 }
 

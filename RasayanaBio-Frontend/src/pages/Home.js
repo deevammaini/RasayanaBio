@@ -1,30 +1,40 @@
 // ============================================
-// pages/Home.js
+// src/pages/Home.js - Modern React Home Page
 // ============================================
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import ProductCard from '../components/ProductCard';
+import CategoriesSection from '../components/CategoriesSection';
+import WhatsAppButton from '../components/WhatsAppButton';
 import './Home.css';
 
 const Home = () => {
-  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchFeaturedProducts();
-  }, []);
-
-  const fetchFeaturedProducts = async () => {
+  const loadProducts = useCallback(async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/products?per_page=6');
-      setFeaturedProducts(response.data.products);
-      setLoading(false);
+      setLoading(true);
+      setError(null);
+      const response = await axios.get('http://localhost:5000/api/products');
+      setProducts(response.data.products || []);
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error('Error loading products:', error);
+      setError('Failed to load products');
+    } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadProducts();
+  }, [loadProducts]);
+
+  const featuredProducts = useMemo(() => {
+    return products.slice(0, 4);
+  }, [products]);
 
   return (
     <div className="home">
@@ -53,11 +63,15 @@ const Home = () => {
 
       <section className="featured-products">
         <div className="container">
-          <h2>Featured Products</h2>
-          <p className="section-subtitle">Carefully formulated herbal supplements backed by science</p>
+          <div className="section-header">
+            <span className="section-tag">- Power of Nature -</span>
+            <h2>Best Sellers Products</h2>
+          </div>
           
           {loading ? (
             <div className="loading">Loading products...</div>
+          ) : error ? (
+            <div className="error">{error}</div>
           ) : (
             <div className="products-grid">
               {featuredProducts.map(product => (
@@ -66,11 +80,13 @@ const Home = () => {
             </div>
           )}
           
-          <div className="text-center">
-            <Link to="/products" className="btn-view-all">View All Products</Link>
+          <div className="view-more-section">
+            <Link to="/products" className="btn-view-more">View More</Link>
           </div>
         </div>
       </section>
+
+      <CategoriesSection />
 
       <section className="testimonials">
         <div className="container">
@@ -103,6 +119,8 @@ const Home = () => {
           </div>
         </div>
       </section>
+      
+      <WhatsAppButton />
     </div>
   );
 };
