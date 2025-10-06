@@ -4,22 +4,24 @@
 import React, { memo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { usePopup } from '../context/PopupContext';
 import { formatPrice } from '../utils/currency';
 import ProductImage from './ProductImage';
 import './ProductCard.css';
 
 const ProductCard = memo(({ product }) => {
   const { addToCart } = useCart();
+  const { showSuccess, showError } = usePopup();
 
   const handleAddToCart = useCallback(async (e) => {
     e.preventDefault();
     try {
       await addToCart(product.id);
-      alert('Added to cart!');
+      showSuccess('Added to cart!', 'Success');
     } catch (error) {
-      alert('Error adding to cart');
+      showError('Error adding to cart', 'Error');
     }
-  }, [addToCart, product.id]);
+  }, [addToCart, product.id, showSuccess, showError]);
 
   return (
     <article className="product-card" data-testid={`product-card-${product.id}`}>

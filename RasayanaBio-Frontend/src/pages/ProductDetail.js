@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../context/CartContext';
+import { usePopup } from '../context/PopupContext';
 import { formatPrice } from '../utils/currency';
 import ProductImage from '../components/ProductImage';
 import PackSelection from '../components/PackSelection';
@@ -19,6 +20,7 @@ const ProductDetail = () => {
   const [selectedPack, setSelectedPack] = useState(1);
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
+  const { showSuccess, showError } = usePopup();
 
   const loadProduct = useCallback(async () => {
     try {
@@ -49,19 +51,11 @@ const ProductDetail = () => {
   const handleAddToCart = useCallback(async () => {
     try {
       await addToCart(product.id, quantity, selectedPack.toString());
-      if (window.showNotification) {
-        window.showNotification('Added to cart!', 'success');
-      } else {
-        alert('Added to cart!');
-      }
+      showSuccess('Added to cart!', 'Success');
     } catch (error) {
-      if (window.showNotification) {
-        window.showNotification('Error adding to cart', 'error');
-      } else {
-        alert('Error adding to cart');
-      }
+      showError('Error adding to cart', 'Error');
     }
-  }, [addToCart, product?.id, quantity, selectedPack]);
+  }, [addToCart, product?.id, quantity, selectedPack, showSuccess, showError]);
 
   const handleBuyNow = useCallback(() => {
     // Navigate to checkout with selected product

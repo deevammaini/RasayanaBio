@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { usePopup } from '../context/PopupContext';
 import { formatPrice } from '../utils/currency';
 import axios from 'axios';
 
@@ -10,6 +11,7 @@ import './Checkout.css';
 const Checkout = () => {
   const { cart, cartSummary, clearCart, validateCoupon, removeCoupon, appliedCoupon } = useCart();
   const { user } = useAuth();
+  const { showError } = usePopup();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [couponCode, setCouponCode] = useState('');
@@ -89,7 +91,7 @@ const Checkout = () => {
       navigate(`/orders/${response.data.order_id}`);
     } catch (error) {
       console.error('Error creating order:', error);
-      alert('Failed to create order. Please try again.');
+      showError('Failed to create order. Please try again.', 'Order Error');
     }
 
     setLoading(false);

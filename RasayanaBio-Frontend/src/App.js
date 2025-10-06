@@ -18,9 +18,11 @@ import OrderDetail from './pages/OrderDetail';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import TestCurrency from './components/TestCurrency';
+import PopupDemo from './components/PopupDemo';
 import WhatsAppButton from './components/WhatsAppButton';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { PopupProvider } from './context/PopupContext';
 import './App.css';
 
 function App() {
@@ -28,31 +30,34 @@ function App() {
     <Router>
       <AuthProvider>
         <CartProvider>
-          <div className="App">
-            <Header />
-            <main>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/test" element={<TestCurrency />} />
-                <Route path="/products" element={<Products />} />
-                <Route path="/products/:id" element={<ProductDetail />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/checkout" element={<Checkout />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/orders" element={<Orders />} />
-                <Route path="/orders/:id" element={<OrderDetail />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-              </Routes>
-                    </main>
-                    <Footer />
-                    <WhatsAppButton />
-                  </div>
-                </CartProvider>
-              </AuthProvider>
-            </Router>
+          <PopupProvider>
+            <div className="App">
+              <Header />
+              <main>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/test" element={<TestCurrency />} />
+                  <Route path="/popup-demo" element={<PopupDemo />} />
+                  <Route path="/products" element={<Products />} />
+                  <Route path="/products/:id" element={<ProductDetail />} />
+                  <Route path="/cart" element={<Cart />} />
+                  <Route path="/checkout" element={<Checkout />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/orders" element={<Orders />} />
+                  <Route path="/orders/:id" element={<OrderDetail />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/contact" element={<Contact />} />
+                </Routes>
+              </main>
+              <Footer />
+              <WhatsAppButton />
+            </div>
+          </PopupProvider>
+        </CartProvider>
+      </AuthProvider>
+    </Router>
   );
 }
 
