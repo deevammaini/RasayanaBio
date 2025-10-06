@@ -204,22 +204,23 @@ const Checkout = () => {
     setLoading(true);
 
     try {
+      // Prepare order data in the format expected by backend
       const orderData = {
-        ...formData,
-        paymentDetails: paymentDetails[formData.paymentMethod],
-        applied_coupon_code: appliedCoupon?.code || null,
-        cartItems: cart.map(item => ({
-          product_id: item.product.id,
-          quantity: item.quantity,
-          pack_size: item.pack_size,
-          unit_price: item.unit_price
-        }))
+        shipping_address: formData.shippingAddress,
+        billing_address: formData.billingAddress || formData.shippingAddress,
+        payment_method: formData.paymentMethod,
+        payment_details: paymentDetails[formData.paymentMethod]
       };
       
       // Simulate payment processing
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       const response = await axios.post('http://localhost:5000/api/orders', orderData);
+      
+      // Generate UPI payment link if UPI method is selected
+      if (formData.paymentMethod === 'upi') {
+        generateUPIPaymentLink(response.data.order_id, response.data.order_number);
+      }
       
       showSuccess('Order placed successfully!', 'Order Confirmed');
       clearCart();
@@ -235,6 +236,25 @@ const Checkout = () => {
     }
 
     setLoading(false);
+  };
+
+  // Generate UPI payment link
+  const generateUPIPaymentLink = (orderId, orderNumber) => {
+    const upiId = paymentDetails.upi.upiId || formData.phoneNumber;
+    const amount = cartSummary.total;
+    
+    // Create UPI payment link
+    const upiLink = `upi://pay?pa=${upiId}&pn=RasayanaBio&am=${amount}&cu=INR&tn=Order ${orderNumber}`;
+    
+    // Show UPI payment link to user
+    showSuccess(
+      `UPI Payment Link Generated!\n\nAmount: ${formatPrice(amount)}\nOrder: ${orderNumber}\nUPI ID: ${upiId}\n\nClick OK to open UPI app`,
+      'UPI Payment Link',
+      () => {
+        // Open UPI link
+        window.open(upiLink, '_blank');
+      }
+    );
   };
 
   if (cart.length === 0) {
@@ -471,6 +491,15 @@ const Checkout = () => {
                               className="form-input"
                               placeholder="Enter your UPI ID (e.g., 9876543210@paytm)"
                             />
+                            {paymentDetails.upi.upiId && (
+                              <button
+                                type="button"
+                                onClick={() => generateUPIPaymentLink(null, 'PREVIEW')}
+                                className="generate-payment-link-btn"
+                              >
+                                Generate Payment Link
+                              </button>
+                            )}
                           </div>
                         )}
                       </div>

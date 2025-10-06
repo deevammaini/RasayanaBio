@@ -401,6 +401,25 @@
   margin: 0;
 }
 
+/* Generate Payment Link Button */
+.generate-payment-link-btn {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #38a169 0%, #48bb78 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.generate-payment-link-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(56, 161, 105, 0.3);
+}
+
 /* Card Payment Form */
 .card-form {
   display: grid;

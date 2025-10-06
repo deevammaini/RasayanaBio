@@ -12,7 +12,8 @@ const Popup = ({
   type = "success", 
   showCloseButton = true,
   autoClose = true,
-  autoCloseDelay = 3000 
+  autoCloseDelay = 3000,
+  onOkClick = null
 }) => {
   useEffect(() => {
     if (isOpen && autoClose) {
@@ -86,7 +87,12 @@ const Popup = ({
         <div className="popup-footer">
           <button 
             className="popup-ok-btn" 
-            onClick={onClose}
+            onClick={() => {
+              if (onOkClick) {
+                onOkClick();
+              }
+              onClose();
+            }}
             autoFocus
           >
             OK

@@ -22,7 +22,8 @@ export const PopupProvider = ({ children }) => {
     type: 'success',
     showCloseButton: true,
     autoClose: true,
-    autoCloseDelay: 3000
+    autoCloseDelay: 3000,
+    onOkClick: null
   });
 
   const showPopup = ({
@@ -31,7 +32,8 @@ export const PopupProvider = ({ children }) => {
     type = 'success',
     showCloseButton = true,
     autoClose = true,
-    autoCloseDelay = 3000
+    autoCloseDelay = 3000,
+    onOkClick = null
   }) => {
     setPopup({
       isOpen: true,
@@ -40,7 +42,8 @@ export const PopupProvider = ({ children }) => {
       type,
       showCloseButton,
       autoClose,
-      autoCloseDelay
+      autoCloseDelay,
+      onOkClick
     });
   };
 
@@ -49,8 +52,8 @@ export const PopupProvider = ({ children }) => {
   };
 
   // Convenience methods for different popup types
-  const showSuccess = (message, title = 'Success') => {
-    showPopup({ title, message, type: 'success' });
+  const showSuccess = (message, title = 'Success', onOkClick = null) => {
+    showPopup({ title, message, type: 'success', onOkClick });
   };
 
   const showError = (message, title = 'Error') => {
@@ -86,6 +89,7 @@ export const PopupProvider = ({ children }) => {
         showCloseButton={popup.showCloseButton}
         autoClose={popup.autoClose}
         autoCloseDelay={popup.autoCloseDelay}
+        onOkClick={popup.onOkClick}
       />
     </PopupContext.Provider>
   );
