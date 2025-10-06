@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 import jwt
 import os
 from functools import wraps
+from urllib.parse import quote
 
 app = Flask(__name__)
 
@@ -709,6 +710,61 @@ def get_order(current_user, order_id):
             'price': item.price
         } for item in order.items]
     }), 200
+
+# Payments - UPI Deep Link Generator (no auth required)
+@app.route('/api/payments/upi-link', methods=['POST'])
+def generate_upi_link():
+    """Generate a standards-compliant UPI deep link and a QR image URL.
+
+    Request JSON:
+      - upi_id: customer VPA (e.g., 9876543210@paytm)
+      - amount: numeric amount in INR
+      - order_number: optional order reference
+      - merchant_name: optional payee name (default: RasayanaBio)
+
+    Response JSON:
+      { success, upi_link, intent_link, qr_url }
+    """
+    try:
+        data = request.get_json() or {}
+        upi_id = (data.get('upi_id') or '').strip()
+        amount = float(data.get('amount') or 0)
+        order_number = (data.get('order_number') or 'ORDER')
+        merchant_name = (data.get('merchant_name') or 'RasayanaBio')
+
+        if not upi_id:
+            return jsonify({'success': False, 'message': 'UPI ID is required'}), 400
+        if amount <= 0:
+            return jsonify({'success': False, 'message': 'Amount must be greater than 0'}), 400
+
+        # Build standard UPI link
+        note = f'Order {order_number}'
+        upi_link = (
+            f"upi://pay?pa={quote(upi_id)}&pn={quote(merchant_name)}"
+            f"&am={amount:.2f}&cu=INR&tn={quote(note)}"
+        )
+
+        # Android intent fallback (helps certain Android browsers)
+        intent_link = (
+            f"intent://pay?pa={quote(upi_id)}&pn={quote(merchant_name)}"
+            f"&am={amount:.2f}&cu=INR&tn={quote(note)}#Intent;scheme=upi;end"
+        )
+
+        # Public QR image API (no server-side dependency)
+        qr_url = (
+            "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data="
+            + quote(upi_link)
+        )
+
+        return jsonify({
+            'success': True,
+            'upi_link': upi_link,
+            'intent_link': intent_link,
+            'qr_url': qr_url
+        }), 200
+
+    except Exception as e:
+        return jsonify({'success': False, 'message': 'Failed to generate UPI link'}), 500
 
 # Review Routes
 @app.route('/api/reviews', methods=['POST'])

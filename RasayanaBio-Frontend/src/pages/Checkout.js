@@ -227,7 +227,7 @@ const Checkout = () => {
       
       // Redirect to order confirmation
       setTimeout(() => {
-        navigate(`/orders/${response.data.order_id}`);
+      navigate(`/orders/${response.data.order_id}`);
       }, 2000);
       
     } catch (error) {
@@ -238,23 +238,42 @@ const Checkout = () => {
     setLoading(false);
   };
 
-  // Generate UPI payment link
-  const generateUPIPaymentLink = (orderId, orderNumber) => {
-    const upiId = paymentDetails.upi.upiId || formData.phoneNumber;
-    const amount = cartSummary.total;
-    
-    // Create UPI payment link
-    const upiLink = `upi://pay?pa=${upiId}&pn=RasayanaBio&am=${amount}&cu=INR&tn=Order ${orderNumber}`;
-    
-    // Show UPI payment link to user
-    showSuccess(
-      `UPI Payment Link Generated!\n\nAmount: ${formatPrice(amount)}\nOrder: ${orderNumber}\nUPI ID: ${upiId}\n\nClick OK to open UPI app`,
-      'UPI Payment Link',
-      () => {
-        // Open UPI link
-        window.open(upiLink, '_blank');
+  // Generate UPI payment link via backend (for reliable deep links on mobile)
+  const generateUPIPaymentLink = async (orderId, orderNumber) => {
+    try {
+      const upiId = paymentDetails.upi.upiId || formData.phoneNumber;
+      const amount = cartSummary.total;
+
+      const { data } = await axios.post('http://localhost:5000/api/payments/upi-link', {
+        upi_id: upiId,
+        amount,
+        order_number: orderNumber,
+        merchant_name: 'RasayanaBio'
+      });
+
+      if (!data.success) {
+        showError('Could not generate UPI link. Please try again.', 'UPI Error');
+        return;
       }
-    );
+
+      // Prefer native upi:// link; fall back to intent for Android
+      const upiLink = data.upi_link;
+      const intentLink = data.intent_link;
+
+      showSuccess(
+        `UPI Payment Link Generated!\n\nAmount: ${formatPrice(amount)}\nOrder: ${orderNumber}\nUPI ID: ${upiId}\n\nClick OK to open UPI app`,
+        'UPI Payment Link',
+        () => {
+          // Try opening UPI link; if blocked, open intent link
+          const opened = window.open(upiLink, '_self');
+          if (!opened || opened.closed || typeof opened.closed === 'undefined') {
+            window.location.href = intentLink;
+          }
+        }
+      );
+    } catch (err) {
+      showError('Could not generate UPI link. Please try again.', 'UPI Error');
+    }
   };
 
   if (cart.length === 0) {
@@ -284,7 +303,7 @@ const Checkout = () => {
           <h1>Secure Checkout</h1>
           <p>Complete your order with confidence</p>
         </div>
-
+        
         <div className="checkout-content">
           {/* Left Side - Checkout Form */}
           <div className="checkout-form-section">
@@ -295,10 +314,10 @@ const Checkout = () => {
               </div>
               
               <div className="form-row">
-                <div className="form-group">
+              <div className="form-group">
                   <label className="form-label">Full Name *</label>
-                  <input
-                    type="text"
+                <input
+                  type="text"
                     name="fullName"
                     value={formData.fullName}
                     onChange={handleChange}
@@ -313,11 +332,11 @@ const Checkout = () => {
                     type="tel"
                     name="phoneNumber"
                     value={formData.phoneNumber}
-                    onChange={handleChange}
+                  onChange={handleChange}
                     className="form-input"
                     placeholder="Enter your phone number"
-                    required
-                  />
+                  required
+                />
                 </div>
               </div>
 
@@ -344,7 +363,7 @@ const Checkout = () => {
                   placeholder="Enter your complete shipping address"
                   required
                 />
-              </div>
+            </div>
 
               <div className="form-group">
                 <label className="form-label">Billing Address</label>
@@ -445,9 +464,9 @@ const Checkout = () => {
                             <label htmlFor="id" className="upi-option-label">
                               Enter UPI ID
                             </label>
-                          </div>
-                        </div>
-                        
+              </div>
+            </div>
+
                         {paymentDetails.upi.method === 'qr' && (
                           <div className="qr-code-section">
                             {paymentDetails.upi.qrGenerated ? (
@@ -482,7 +501,7 @@ const Checkout = () => {
                         )}
                         
                         {paymentDetails.upi.method === 'id' && (
-                          <div className="form-group">
+              <div className="form-group">
                             <label className="form-label">UPI ID</label>
                             <input
                               type="text"
@@ -628,14 +647,14 @@ const Checkout = () => {
                       </div>
                     </div>
                   )}
-                </div>
               </div>
+            </div>
 
-              <button
-                type="submit"
+            <button 
+              type="submit" 
                 className="place-order-btn"
-                disabled={loading}
-              >
+              disabled={loading}
+            >
                 {loading ? (
                   <>
                     <span className="loading-spinner"></span>
@@ -644,8 +663,8 @@ const Checkout = () => {
                 ) : (
                   `Place Order - ${formatPrice(cartSummary.total)}`
                 )}
-              </button>
-            </form>
+            </button>
+          </form>
           </div>
 
           {/* Right Side - Order Summary */}
@@ -668,9 +687,9 @@ const Checkout = () => {
                   </div>
                   <div className="item-price">
                     {formatPrice(item.subtotal)}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
 
             <div className="order-totals">
@@ -754,7 +773,7 @@ const Checkout = () => {
             {availableCoupons.length > 0 && (
               <div className="available-coupons">
                 <div className="available-coupons-title">Available Coupons</div>
-                {availableCoupons.slice(0, 3).map(coupon => (
+                {availableCoupons.map(coupon => (
                   <div
                     key={coupon.id}
                     className="coupon-card"
