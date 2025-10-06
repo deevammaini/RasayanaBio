@@ -48,7 +48,7 @@ const ProductDetail = () => {
 
   const handleAddToCart = useCallback(async () => {
     try {
-      await addToCart(product.id, quantity);
+      await addToCart(product.id, quantity, selectedPack.toString());
       if (window.showNotification) {
         window.showNotification('Added to cart!', 'success');
       } else {
@@ -61,7 +61,7 @@ const ProductDetail = () => {
         alert('Error adding to cart');
       }
     }
-  }, [addToCart, product?.id, quantity]);
+  }, [addToCart, product?.id, quantity, selectedPack]);
 
   const handleBuyNow = useCallback(() => {
     // Navigate to checkout with selected product
