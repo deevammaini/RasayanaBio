@@ -1226,6 +1226,73 @@ def seed_all_products():
         db.session.commit()
         print("Original 4 products added successfully!")
 
+def seed_new_products():
+    """Add new products (Multiviman Gummies and Hair Serum) to database"""
+    with app.app_context():
+        # Check if Multivitamin Gummies already exists
+        existing_multiviman = Product.query.filter_by(name='Multivitamin Gummies').first()
+        if not existing_multiviman:
+            multiviman = Product(
+                name='Multivitamin Gummies',
+                description='Delicious multivitamin gummies packed with essential vitamins and minerals for daily health support. These tasty gummies provide a convenient way to supplement your daily nutrition.',
+                short_description='Delicious multivitamin gummies with essential vitamins and minerals for daily health support.',
+                price=599.0,
+                sale_price=449.0,
+                category='Vitamins & Supplements',
+                tags='multivitamin,gummies,vitamins,minerals,daily health,nutrition',
+                image_url='/images/multiviman-gummies.jpg',
+                stock_quantity=50,
+                ingredients='Vitamin A, Vitamin C, Vitamin D, Vitamin E, Vitamin B Complex, Iron, Zinc, Calcium, Natural fruit flavors',
+                benefits='''• Supports daily nutrition needs
+• Boosts immune system
+• Promotes healthy growth and development
+• Enhances energy levels
+• Supports bone and muscle health
+• Delicious and easy to consume''',
+                usage_instructions='Take 2 gummies daily with food or as directed by a healthcare professional.',
+                warnings='Keep out of reach of children. Do not exceed recommended dosage. Consult healthcare provider if pregnant, nursing, or taking medications.',
+                is_vegan=False,
+                is_gmo_free=True,
+                is_gluten_free=True
+            )
+            db.session.add(multiviman)
+            print("Multivitamin Gummies added successfully!")
+        else:
+            print("Multivitamin Gummies already exists")
+
+        # Check if Hair Serum already exists
+        existing_hair_serum = Product.query.filter_by(name='Hair Serum').first()
+        if not existing_hair_serum:
+            hair_serum = Product(
+                name='Hair Serum',
+                description='Premium hair serum enriched with natural oils and vitamins to nourish, strengthen, and add shine to your hair. Perfect for all hair types.',
+                short_description='Premium hair serum with natural oils and vitamins for stronger, shinier hair.',
+                price=399.0,
+                sale_price=299.0,
+                category='Hair Care',
+                tags='hair serum,hair care,natural oils,vitamins,hair growth,hair shine',
+                image_url='/images/hair-serum.jpg',
+                stock_quantity=75,
+                ingredients='Argan Oil, Coconut Oil, Vitamin E, Biotin, Keratin, Natural extracts',
+                benefits='''• Nourishes and strengthens hair
+• Adds natural shine and luster
+• Reduces hair breakage
+• Promotes healthy hair growth
+• Smooths frizz and flyaways
+• Suitable for all hair types''',
+                usage_instructions='Apply a small amount to damp or dry hair, focusing on ends. Style as desired.',
+                warnings='For external use only. Avoid contact with eyes. Discontinue use if irritation occurs.',
+                is_vegan=True,
+                is_gmo_free=True,
+                is_gluten_free=True
+            )
+            db.session.add(hair_serum)
+            print("Hair Serum added successfully!")
+        else:
+            print("Hair Serum already exists")
+        
+        db.session.commit()
+
 # Initialize database
 def create_tables():
     with app.app_context():
@@ -1236,4 +1303,5 @@ def create_tables():
 
 if __name__ == '__main__':
     create_tables()
+    seed_new_products()  # Add the new products
     app.run(debug=True)
