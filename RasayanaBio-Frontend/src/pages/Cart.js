@@ -1,7 +1,7 @@
 // ============================================
 // pages/Cart.js
 // ============================================
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -16,6 +16,27 @@ const Cart = () => {
   const [couponCode, setCouponCode] = useState('');
   const [couponMessage, setCouponMessage] = useState('');
   const [couponLoading, setCouponLoading] = useState(false);
+  const [availableCoupons, setAvailableCoupons] = useState([]);
+  const [showCouponList, setShowCouponList] = useState(false);
+
+  // Fetch available coupons on component mount
+  useEffect(() => {
+    fetchAvailableCoupons();
+  }, []);
+
+  const fetchAvailableCoupons = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/coupons');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          setAvailableCoupons(data.coupons);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching coupons:', error);
+    }
+  };
 
   const handleCheckout = () => {
     if (!isAuthenticated) {
@@ -56,6 +77,30 @@ const Cart = () => {
   const handleRemoveCoupon = () => {
     removeCoupon();
     setCouponMessage('');
+  };
+
+  const handleCouponSelect = (couponCode) => {
+    setCouponCode(couponCode);
+    setShowCouponList(false);
+  };
+
+  const getCouponStatus = (coupon) => {
+    const subtotal = cartSummary.subtotal;
+    const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
+    
+    if (coupon.min_order_amount > 0 && subtotal < coupon.min_order_amount) {
+      return { status: 'invalid', message: `Minimum order ₹${coupon.min_order_amount}` };
+    }
+    if (coupon.min_quantity > 0 && totalQuantity < coupon.min_quantity) {
+      return { status: 'invalid', message: `Minimum ${coupon.min_quantity} items` };
+    }
+    if (coupon.usage_limit && coupon.used_count >= coupon.usage_limit) {
+      return { status: 'invalid', message: 'Usage limit reached' };
+    }
+    if (coupon.valid_until && new Date(coupon.valid_until) < new Date()) {
+      return { status: 'invalid', message: 'Expired' };
+    }
+    return { status: 'valid', message: 'Available' };
   };
 
   if (cart.length === 0) {
@@ -140,22 +185,74 @@ const Cart = () => {
                   </button>
                 </div>
               ) : (
-                <div className="coupon-input">
-                  <input
-                    type="text"
-                    placeholder="Enter coupon code"
-                    value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                    onKeyPress={(e) => e.key === 'Enter' && handleApplyCoupon()}
-                  />
-                  <button 
-                    className="btn-apply-coupon" 
-                    onClick={handleApplyCoupon}
-                    disabled={couponLoading}
-                  >
-                    {couponLoading ? 'Applying...' : 'Apply'}
-                  </button>
-                </div>
+                <>
+                  <div className="coupon-input">
+                    <input
+                      type="text"
+                      placeholder="Enter coupon code"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                      onKeyPress={(e) => e.key === 'Enter' && handleApplyCoupon()}
+                    />
+                    <button 
+                      className="btn-apply-coupon" 
+                      onClick={handleApplyCoupon}
+                      disabled={couponLoading}
+                    >
+                      {couponLoading ? 'Applying...' : 'Apply'}
+                    </button>
+                  </div>
+                  
+                  {/* Available Coupons List */}
+                  <div className="available-coupons-section">
+                    <button 
+                      className="btn-show-coupons"
+                      onClick={() => setShowCouponList(!showCouponList)}
+                    >
+                      {showCouponList ? 'Hide Available Coupons' : 'Show Available Coupons'}
+                    </button>
+                    
+                    {showCouponList && (
+                      <div className="available-coupons-list">
+                        <h4>Available Coupons:</h4>
+                        {availableCoupons.map(coupon => {
+                          const status = getCouponStatus(coupon);
+                          return (
+                            <div 
+                              key={coupon.id} 
+                              className={`coupon-item ${status.status}`}
+                              onClick={() => status.status === 'valid' && handleCouponSelect(coupon.code)}
+                            >
+                              <div className="coupon-item-header">
+                                <span className="coupon-code">{coupon.code}</span>
+                                <span className={`coupon-status ${status.status}`}>
+                                  {status.message}
+                                </span>
+                              </div>
+                              <div className="coupon-description">{coupon.description}</div>
+                              <div className="coupon-discount">
+                                {coupon.discount_type === 'percentage' 
+                                  ? `${coupon.discount_value}% off` 
+                                  : `₹${coupon.discount_value} off`
+                                }
+                                {coupon.min_order_amount > 0 && (
+                                  <span className="coupon-condition">
+                                    (Min order: ₹{coupon.min_order_amount})
+                                  </span>
+                                )}
+                                {coupon.min_quantity > 0 && (
+                                  <span className="coupon-condition">
+                                    (Min {coupon.min_quantity} items)
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </>
               )}
               {couponMessage && (
                 <div className={`coupon-message ${appliedCoupon ? 'success' : 'error'}`}>

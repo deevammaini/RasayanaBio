@@ -12,8 +12,14 @@ app = Flask(__name__)
 
 # Configuration
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rasayanabio.db'
+# MySQL Configuration for RasayanaBio_Data schema
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:deevammaini@localhost/RasayanaBio_Data'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'pool_pre_ping': True,
+    'pool_recycle': 300,
+    'connect_args': {'charset': 'utf8mb4'}
+}
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
@@ -24,8 +30,9 @@ db = SQLAlchemy(app)
 CORS(app)
 mail = Mail(app)
 
-# Database Models
+# Database Models - Updated for MySQL RasayanaBio_Data schema
 class User(db.Model):
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
@@ -37,6 +44,7 @@ class User(db.Model):
     reviews = db.relationship('Review', backref='user', lazy=True)
 
 class Product(db.Model):
+    __tablename__ = 'products'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text)
@@ -61,24 +69,27 @@ class Product(db.Model):
     faqs = db.relationship('ProductFAQ', backref='product', lazy=True)
 
 class ProductFAQ(db.Model):
+    __tablename__ = 'product_faqs'
     id = db.Column(db.Integer, primary_key=True)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
     question = db.Column(db.String(500), nullable=False)
     answer = db.Column(db.Text, nullable=False)
     order = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Cart(db.Model):
+    __tablename__ = 'carts'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     session_id = db.Column(db.String(100))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     items = db.relationship('CartItem', backref='cart', lazy=True, cascade='all, delete-orphan')
 
 class CartItem(db.Model):
+    __tablename__ = 'cart_items'
     id = db.Column(db.Integer, primary_key=True)
-    cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'), nullable=False)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+    cart_id = db.Column(db.Integer, db.ForeignKey('carts.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False, default=1)
     pack_size = db.Column(db.String(50), default='1')  # 1, 2, 3 bottles
     unit_price = db.Column(db.Float, nullable=False)  # Price per unit based on pack
@@ -86,10 +97,17 @@ class CartItem(db.Model):
     product = db.relationship('Product')
 
 class Order(db.Model):
+    __tablename__ = 'orders'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     order_number = db.Column(db.String(50), unique=True, nullable=False)
     total_amount = db.Column(db.Float, nullable=False)
+    subtotal = db.Column(db.Float, nullable=False)
+    coupon_discount = db.Column(db.Float, default=0)
+    applied_coupon_code = db.Column(db.String(50), nullable=True)
+    cgst = db.Column(db.Float, default=0)
+    sgst = db.Column(db.Float, default=0)
+    total_tax = db.Column(db.Float, default=0)
     status = db.Column(db.String(50), default='pending')  # pending, processing, shipped, delivered, cancelled
     shipping_address = db.Column(db.Text)
     billing_address = db.Column(db.Text)
@@ -100,16 +118,18 @@ class Order(db.Model):
     items = db.relationship('OrderItem', backref='order', lazy=True)
 
 class OrderItem(db.Model):
+    __tablename__ = 'order_items'
     id = db.Column(db.Integer, primary_key=True)
-    order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Float, nullable=False)
 
 class Review(db.Model):
+    __tablename__ = 'reviews'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
     rating = db.Column(db.Integer, nullable=False)  # 1-5
     title = db.Column(db.String(200))
     comment = db.Column(db.Text)
@@ -117,12 +137,14 @@ class Review(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Coupon(db.Model):
+    __tablename__ = 'coupons'
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(50), unique=True, nullable=False)
     description = db.Column(db.String(200))
     discount_type = db.Column(db.String(20), nullable=False)  # 'percentage' or 'fixed'
     discount_value = db.Column(db.Float, nullable=False)  # percentage (0-100) or fixed amount
     min_order_amount = db.Column(db.Float, default=0)
+    min_quantity = db.Column(db.Integer, default=0)  # Minimum number of products
     max_discount_amount = db.Column(db.Float)  # For percentage discounts
     usage_limit = db.Column(db.Integer)  # Total usage limit
     used_count = db.Column(db.Integer, default=0)
@@ -132,6 +154,7 @@ class Coupon(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class ContactMessage(db.Model):
+    __tablename__ = 'contact_messages'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), nullable=False)
@@ -318,19 +341,101 @@ def get_product_packs(product_id):
     
     return jsonify({'packs': packs}), 200
 
+@app.route('/api/coupons', methods=['GET'])
+def get_coupons():
+    """Get all available coupons"""
+    try:
+        coupons = Coupon.query.filter_by(is_active=True).all()
+        coupon_list = []
+        
+        for coupon in coupons:
+            coupon_data = {
+                'id': coupon.id,
+                'code': coupon.code,
+                'description': coupon.description,
+                'discount_type': coupon.discount_type,
+                'discount_value': coupon.discount_value,
+                'min_order_amount': coupon.min_order_amount,
+                'min_quantity': coupon.min_quantity,
+                'max_discount_amount': coupon.max_discount_amount,
+                'usage_limit': coupon.usage_limit,
+                'used_count': coupon.used_count,
+                'valid_until': coupon.valid_until.isoformat() if coupon.valid_until else None
+            }
+            coupon_list.append(coupon_data)
+        
+        return jsonify({
+            'success': True,
+            'coupons': coupon_list
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': 'Error fetching coupons'
+        }), 500
+
 @app.route('/api/coupons/validate', methods=['POST'])
 def validate_coupon_endpoint():
     """Validate coupon code"""
     data = request.get_json()
     code = data.get('code', '').strip().upper()
     subtotal = data.get('subtotal', 0)
+    total_quantity = data.get('total_quantity', 0)
     
     if not code:
         return jsonify({'valid': False, 'message': 'Coupon code is required'}), 400
     
-    result = validate_coupon(code, subtotal)
+    result = validate_coupon(code, subtotal, total_quantity)
     
     if result['valid']:
+        return jsonify(result), 200
+    else:
+        return jsonify(result), 400
+
+@app.route('/api/checkout/validate-coupon', methods=['POST'])
+def validate_checkout_coupon():
+    """Validate coupon code for checkout with detailed cart information"""
+    data = request.get_json()
+    code = data.get('code', '').strip().upper()
+    cart_items = data.get('cart_items', [])
+    
+    if not code:
+        return jsonify({'valid': False, 'message': 'Coupon code is required'}), 400
+    
+    if not cart_items:
+        return jsonify({'valid': False, 'message': 'Cart is empty'}), 400
+    
+    # Calculate subtotal and total quantity
+    subtotal = 0
+    total_quantity = 0
+    
+    for item in cart_items:
+        # Get product price (assuming item has product info)
+        product_price = item.get('unit_price', 0)
+        quantity = item.get('quantity', 0)
+        subtotal += product_price * quantity
+        total_quantity += quantity
+    
+    result = validate_coupon(code, subtotal, total_quantity)
+    
+    if result['valid']:
+        # Calculate final totals with coupon
+        discount_amount = result['coupon']['discount_amount']
+        discounted_subtotal = subtotal - discount_amount
+        taxes = calculate_taxes(discounted_subtotal)
+        final_total = discounted_subtotal + taxes['total_tax']
+        
+        result['final_calculation'] = {
+            'original_subtotal': subtotal,
+            'discount_amount': discount_amount,
+            'discounted_subtotal': discounted_subtotal,
+            'cgst': taxes['cgst'],
+            'sgst': taxes['sgst'],
+            'total_tax': taxes['total_tax'],
+            'final_total': final_total
+        }
+        
         return jsonify(result), 200
     else:
         return jsonify(result), 400
@@ -397,7 +502,8 @@ def get_cart():
     # Get coupon from request headers or session
     coupon_code = request.headers.get('Coupon-Code')
     if coupon_code:
-        coupon_result = validate_coupon(coupon_code, subtotal)
+        total_quantity = sum(item.quantity for item in cart.items)
+        coupon_result = validate_coupon(coupon_code, subtotal, total_quantity)
         if coupon_result['valid']:
             applied_coupon = coupon_result['coupon']
             coupon_discount = applied_coupon['discount_amount']
@@ -731,7 +837,7 @@ def calculate_coupon_discount(coupon, subtotal):
     
     return 0
 
-def validate_coupon(code, subtotal):
+def validate_coupon(code, subtotal, total_quantity=0):
     """Validate coupon and return discount amount"""
     coupon = Coupon.query.filter_by(code=code.upper()).first()
     
@@ -747,6 +853,9 @@ def validate_coupon(code, subtotal):
     
     if subtotal < coupon.min_order_amount:
         return {'valid': False, 'message': f'Minimum order amount of ₹{coupon.min_order_amount} required'}
+    
+    if coupon.min_quantity and total_quantity < coupon.min_quantity:
+        return {'valid': False, 'message': f'Minimum {coupon.min_quantity} products required for this coupon'}
     
     if coupon.usage_limit and coupon.used_count >= coupon.usage_limit:
         return {'valid': False, 'message': 'Coupon usage limit exceeded'}
@@ -848,6 +957,56 @@ def migrate_database():
                     print("Creating coupon table...")
                     db.create_all()
                     print("Coupon table created successfully!")
+                else:
+                    # Check if coupon table has min_quantity column
+                    result = conn.execute(db.text("PRAGMA table_info(coupon)"))
+                    coupon_columns = [row[1] for row in result]
+                    
+                    if 'min_quantity' not in coupon_columns:
+                        print("Adding 'min_quantity' column to coupon table...")
+                        conn.execute(db.text("ALTER TABLE coupon ADD COLUMN min_quantity INTEGER DEFAULT 0"))
+                        conn.commit()
+                        print("Min quantity column added successfully!")
+                
+                # Check if order table has new columns
+                result = conn.execute(db.text("PRAGMA table_info(\"order\")"))
+                order_columns = [row[1] for row in result]
+                
+                if 'subtotal' not in order_columns:
+                    print("Adding 'subtotal' column to order table...")
+                    conn.execute(db.text("ALTER TABLE \"order\" ADD COLUMN subtotal FLOAT"))
+                    conn.commit()
+                    print("Subtotal column added successfully!")
+                
+                if 'coupon_discount' not in order_columns:
+                    print("Adding 'coupon_discount' column to order table...")
+                    conn.execute(db.text("ALTER TABLE \"order\" ADD COLUMN coupon_discount FLOAT DEFAULT 0"))
+                    conn.commit()
+                    print("Coupon discount column added successfully!")
+                
+                if 'applied_coupon_code' not in order_columns:
+                    print("Adding 'applied_coupon_code' column to order table...")
+                    conn.execute(db.text("ALTER TABLE \"order\" ADD COLUMN applied_coupon_code VARCHAR(50)"))
+                    conn.commit()
+                    print("Applied coupon code column added successfully!")
+                
+                if 'cgst' not in order_columns:
+                    print("Adding 'cgst' column to order table...")
+                    conn.execute(db.text("ALTER TABLE \"order\" ADD COLUMN cgst FLOAT DEFAULT 0"))
+                    conn.commit()
+                    print("CGST column added successfully!")
+                
+                if 'sgst' not in order_columns:
+                    print("Adding 'sgst' column to order table...")
+                    conn.execute(db.text("ALTER TABLE \"order\" ADD COLUMN sgst FLOAT DEFAULT 0"))
+                    conn.commit()
+                    print("SGST column added successfully!")
+                
+                if 'total_tax' not in order_columns:
+                    print("Adding 'total_tax' column to order table...")
+                    conn.execute(db.text("ALTER TABLE \"order\" ADD COLUMN total_tax FLOAT DEFAULT 0"))
+                    conn.commit()
+                    print("Total tax column added successfully!")
         except Exception as e:
             print(f"Migration note: {e}")
 
@@ -970,6 +1129,38 @@ def seed_sample_coupons():
                 'usage_limit': 25,
                 'is_active': True,
                 'valid_until': datetime.utcnow() + timedelta(days=60)
+            },
+            {
+                'code': 'BUY4SAVE250',
+                'description': 'Buy 4 products and get ₹250 off',
+                'discount_type': 'fixed',
+                'discount_value': 250,
+                'min_order_amount': 0,
+                'min_quantity': 4,  # Minimum 4 products
+                'usage_limit': 30,
+                'is_active': True,
+                'valid_until': datetime.utcnow() + timedelta(days=45)
+            },
+            {
+                'code': 'FIRSTORDER15',
+                'description': '15% off on your first order above ₹800',
+                'discount_type': 'percentage',
+                'discount_value': 15,
+                'min_order_amount': 800,
+                'max_discount_amount': 300,
+                'usage_limit': 1,  # Only for first order
+                'is_active': True,
+                'valid_until': datetime.utcnow() + timedelta(days=90)
+            },
+            {
+                'code': 'HEALTHY100',
+                'description': '₹100 off on orders above ₹1500',
+                'discount_type': 'fixed',
+                'discount_value': 100,
+                'min_order_amount': 1500,
+                'usage_limit': 75,
+                'is_active': True,
+                'valid_until': datetime.utcnow() + timedelta(days=20)
             }
         ]
         
@@ -980,16 +1171,68 @@ def seed_sample_coupons():
         db.session.commit()
         print("Sample coupons added successfully!")
 
+def seed_all_products():
+    """Add original 4 products to database"""
+    with app.app_context():
+        # Check if products already exist
+        if Product.query.count() > 0:
+            print("Products already exist")
+            return
+        
+        # Create original 4 products with correct pricing from rasayanabio.com
+        products = [
+            {
+                'name': 'Female Vitality',
+                'description': 'Premium herbal supplement for women\'s health and vitality',
+                'price': 1199.0,
+                'sale_price': 840.0,
+                'category': 'Women\'s Health',
+                'image_url': '/images/female-vitality.jpg',
+                'stock_quantity': 100
+            },
+            {
+                'name': 'Male Vitality',
+                'description': 'Natural supplement for men\'s energy and vitality',
+                'price': 1099.0,
+                'sale_price': 800.0,
+                'category': 'Men\'s Health',
+                'image_url': '/images/male-vitality.jpg',
+                'stock_quantity': 100
+            },
+            {
+                'name': 'Joint Care Plus',
+                'description': 'Advanced joint health supplement for mobility and comfort',
+                'price': 1099.0,
+                'sale_price': 770.0,
+                'category': 'Joint Health',
+                'image_url': '/images/joint-care.jpg',
+                'stock_quantity': 100
+            },
+            {
+                'name': 'Digestive Wellness',
+                'description': 'Natural digestive health supplement for better gut health',
+                'price': 899.0,
+                'sale_price': 600.0,
+                'category': 'Digestive Health',
+                'image_url': '/images/digestive-wellness.jpg',
+                'stock_quantity': 100
+            }
+        ]
+        
+        for product_data in products:
+            product = Product(**product_data)
+            db.session.add(product)
+        
+        db.session.commit()
+        print("Original 4 products added successfully!")
+
 # Initialize database
 def create_tables():
     with app.app_context():
+        # Only create tables if they don't exist
+        # Don't seed data since you already have it in MySQL
         db.create_all()
-        # Run migration to add missing columns
-        migrate_database()
-        # Seed Female Vitality product
-        seed_female_vitality_product()
-        # Seed sample coupons
-        seed_sample_coupons()
+        print("Database tables created/verified successfully!")
 
 if __name__ == '__main__':
     create_tables()
