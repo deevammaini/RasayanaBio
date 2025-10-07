@@ -26,7 +26,7 @@ const Cart = () => {
 
   const fetchAvailableCoupons = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/coupons');
+      const response = await fetch('http://localhost:4000/api/coupons');
       if (response.ok) {
         const data = await response.json();
         if (data.success) {

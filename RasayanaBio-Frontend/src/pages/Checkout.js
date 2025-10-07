@@ -57,7 +57,7 @@ const Checkout = () => {
 
   const fetchAvailableCoupons = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/coupons');
+      const response = await axios.get('http://localhost:4000/api/coupons');
       if (response.data.success) {
         setAvailableCoupons(response.data.coupons);
       }
@@ -215,7 +215,7 @@ const Checkout = () => {
       // Simulate payment processing
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      const response = await axios.post('http://localhost:5000/api/orders', orderData);
+      const response = await axios.post('http://localhost:4000/api/orders', orderData);
       
       // Generate UPI payment link if UPI method is selected
       if (formData.paymentMethod === 'upi') {
@@ -244,7 +244,7 @@ const Checkout = () => {
       const upiId = paymentDetails.upi.upiId || formData.phoneNumber;
       const amount = cartSummary.total;
 
-      const { data } = await axios.post('http://localhost:5000/api/payments/upi-link', {
+      const { data } = await axios.post('http://localhost:4000/api/payments/upi-link', {
         upi_id: upiId,
         amount,
         order_number: orderNumber,

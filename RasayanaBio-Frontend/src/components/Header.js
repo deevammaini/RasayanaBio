@@ -5,11 +5,13 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 import './Header.css';
 
 const Header = () => {
   const { isAuthenticated, logout, user } = useAuth();
   const { cartCount } = useCart();
+  const { wishlistCount } = useWishlist();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -50,6 +52,10 @@ const Header = () => {
                 <Link to="/register" className="btn-register">Sign Up</Link>
               </>
             )}
+            <Link to="/wishlist" className="wishlist-btn">
+              ♥
+              {wishlistCount > 0 && <span className="wishlist-badge">{wishlistCount}</span>}
+            </Link>
             <Link to="/cart" className="cart-btn">
               🛒
               {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}

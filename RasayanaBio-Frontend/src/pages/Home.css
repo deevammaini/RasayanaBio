@@ -19,9 +19,9 @@
   min-height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: #f8f9fa;
   overflow: hidden;
+  padding-top: 80px;
 }
 
 .hero-background {
@@ -30,52 +30,224 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grain)"/></svg>');
-  opacity: 0.3;
+  background: #f8f9fa;
 }
 
-.hero-overlay {
+.botanical-pattern {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(ellipse at center, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+  background-image: 
+    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path d="M50 20 Q70 40 50 60 Q30 40 50 20" fill="none" stroke="rgba(44,85,48,0.1)" stroke-width="1"/><circle cx="120" cy="80" r="15" fill="none" stroke="rgba(44,85,48,0.1)" stroke-width="1"/><path d="M150 30 Q170 50 150 70 Q130 50 150 30" fill="none" stroke="rgba(44,85,48,0.1)" stroke-width="1"/></svg>');
+  background-size: 300px 300px;
+  opacity: 0.3;
 }
 
 .hero-content {
   position: relative;
   z-index: 2;
-  text-align: center;
-  color: white;
-  max-width: 800px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
 }
 
-.hero-title {
-  font-size: 3.5rem;
-  font-weight: 700;
-  line-height: 1.2;
-  margin-bottom: 1rem;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.hero-subtitle {
-  color: #fbbf24;
-  font-weight: 600;
-}
-
-.hero-description {
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
-  opacity: 0.9;
-  font-weight: 300;
-}
-
-.hero-actions {
+.hero-left {
   display: flex;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.brand-icon {
+  width: 80px;
+  height: 80px;
+}
+
+.lotus-icon {
+  width: 100%;
+  height: 100%;
+}
+
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sanskrit-text-small {
+  font-size: 1.2rem;
+  color: #2c5530;
+  font-weight: 400;
+  margin: 0;
+  font-family: 'Times New Roman', serif;
+}
+
+.sanskrit-text-large {
+  font-size: 2.5rem;
+  color: #2c5530;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+  font-family: 'Times New Roman', serif;
+}
+
+.english-translation {
+  font-size: 1rem;
+  color: #6b7280;
+  margin: 0;
+  font-weight: 400;
+}
+
+.hero-right {
+  position: relative;
+  display: flex;
   justify-content: center;
-  flex-wrap: wrap;
+  align-items: center;
+}
+
+.capsule-container {
+  position: relative;
+  width: 200px;
+  height: 400px;
+}
+
+.green-capsule {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 300px;
+  background: linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+  border-radius: 40px;
+  box-shadow: 0 10px 30px rgba(22, 163, 74, 0.3);
+}
+
+.capsule-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 30%, rgba(0,0,0,0.1) 70%, rgba(0,0,0,0.2) 100%);
+  border-radius: 40px;
+}
+
+.vines-flowers {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.vine {
+  position: absolute;
+  background: #22c55e;
+  border-radius: 2px;
+}
+
+.vine-1 {
+  width: 3px;
+  height: 120px;
+  top: 20px;
+  left: 60px;
+  transform: rotate(15deg);
+}
+
+.vine-2 {
+  width: 3px;
+  height: 100px;
+  top: 40px;
+  left: 70px;
+  transform: rotate(-10deg);
+}
+
+.flower {
+  position: absolute;
+  font-size: 1.5rem;
+}
+
+.flower-1 {
+  top: 30px;
+  left: 80px;
+}
+
+.flower-2 {
+  top: 60px;
+  left: 90px;
+}
+
+.flower-3 {
+  top: 90px;
+  left: 75px;
+}
+
+.carousel-nav {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.carousel-arrow {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #2c5530;
+  cursor: pointer;
+  padding: 1rem;
+  pointer-events: auto;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.carousel-arrow:hover {
+  opacity: 1;
+}
+
+.carousel-prev {
+  margin-left: 2rem;
+}
+
+.carousel-next {
+  margin-right: 2rem;
+}
+
+.whatsapp-button {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  background: #25d366;
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 25px 5px 25px 25px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.whatsapp-button:hover {
+  transform: translateY(-2px);
+}
+
+.whatsapp-icon {
+  font-size: 1.2rem;
 }
 
 /* Wealth Health Section */
@@ -533,8 +705,47 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .hero-title {
-    font-size: 2.5rem;
+  .hero-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    text-align: center;
+  }
+  
+  .hero-left {
+    order: 2;
+  }
+  
+  .hero-right {
+    order: 1;
+  }
+  
+  .sanskrit-text-large {
+    font-size: 2rem;
+  }
+  
+  .sanskrit-text-small {
+    font-size: 1rem;
+  }
+  
+  .capsule-container {
+    width: 150px;
+    height: 300px;
+  }
+  
+  .green-capsule {
+    width: 60px;
+    height: 200px;
+  }
+  
+  .carousel-nav {
+    display: none;
+  }
+  
+  .whatsapp-button {
+    bottom: 1rem;
+    right: 1rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
   }
   
   .wealth-content,
@@ -574,17 +785,31 @@
 }
 
 @media (max-width: 480px) {
-  .hero-title {
-    font-size: 2rem;
+  .sanskrit-text-large {
+    font-size: 1.5rem;
   }
   
-  .hero-description {
-    font-size: 1rem;
+  .sanskrit-text-small {
+    font-size: 0.9rem;
   }
   
-  .hero-actions {
-    flex-direction: column;
-    align-items: center;
+  .english-translation {
+    font-size: 0.9rem;
+  }
+  
+  .capsule-container {
+    width: 120px;
+    height: 250px;
+  }
+  
+  .green-capsule {
+    width: 50px;
+    height: 150px;
+  }
+  
+  .brand-icon {
+    width: 60px;
+    height: 60px;
   }
   
   .btn-primary,

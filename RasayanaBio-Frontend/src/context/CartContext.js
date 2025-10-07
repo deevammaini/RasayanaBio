@@ -37,7 +37,7 @@ export const CartProvider = ({ children }) => {
         headers['Coupon-Code'] = appliedCoupon.code;
       }
       
-      const response = await axios.get('http://localhost:5000/api/cart', { headers });
+      const response = await axios.get('http://localhost:4000/api/cart', { headers });
       setCart(response.data.items || []);
       setCartSummary({
         subtotal: response.data.subtotal || 0,
@@ -60,7 +60,7 @@ export const CartProvider = ({ children }) => {
 
   const validateCoupon = async (code) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/coupons/validate', {
+      const response = await axios.post('http://localhost:4000/api/coupons/validate', {
         code: code,
         subtotal: cartSummary.subtotal
       });
@@ -82,7 +82,7 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = async (productId, quantity = 1, packSize = '1') => {
     try {
-      await axios.post('http://localhost:5000/api/cart/add', 
+      await axios.post('http://localhost:4000/api/cart/add', 
         { product_id: productId, quantity, pack_size: packSize },
         { headers: { 'Session-Id': sessionId } }
       );
@@ -103,7 +103,7 @@ export const CartProvider = ({ children }) => {
         updateData.pack_size = packSize;
       }
       
-      await axios.put(`http://localhost:5000/api/cart/update/${itemId}`, 
+      await axios.put(`http://localhost:4000/api/cart/update/${itemId}`, 
         updateData,
         { headers: { 'Session-Id': sessionId } }
       );
@@ -115,7 +115,7 @@ export const CartProvider = ({ children }) => {
 
   const removeFromCart = async (itemId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/cart/remove/${itemId}`, {
+      await axios.delete(`http://localhost:4000/api/cart/remove/${itemId}`, {
         headers: { 'Session-Id': sessionId }
       });
       await fetchCart();

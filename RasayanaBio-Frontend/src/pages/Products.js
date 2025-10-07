@@ -27,7 +27,7 @@ const Products = () => {
       params.append('page', page);
       params.append('per_page', 12);
 
-      const response = await axios.get(`http://localhost:5000/api/products?${params}`);
+      const response = await axios.get(`http://localhost:4000/api/products?${params}`);
       setProducts(response.data.products);
       setTotalPages(response.data.pages);
       setLoading(false);

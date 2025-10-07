@@ -16,7 +16,7 @@ const PackSelection = ({ product, onPackChange, onQuantityChange, onAddToCart, o
       
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:5000/api/products/${product.id}/packs`);
+        const response = await axios.get(`http://localhost:4000/api/products/${product.id}/packs`);
         setPackData(response.data.packs);
       } catch (error) {
         console.error('Error fetching pack data:', error);

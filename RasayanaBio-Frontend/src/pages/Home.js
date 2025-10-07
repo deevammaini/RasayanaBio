@@ -18,7 +18,7 @@ const Home = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get('http://localhost:5000/api/products');
+      const response = await axios.get('http://localhost:4000/api/products');
       setProducts(response.data.products || []);
     } catch (error) {
       console.error('Error loading products:', error);
@@ -41,23 +41,46 @@ const Home = () => {
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-background">
-          <div className="hero-overlay"></div>
+          <div className="botanical-pattern"></div>
         </div>
         <div className="container">
           <div className="hero-content">
-            <div className="hero-text">
-              <h1 className="hero-title">
-                सर्वे भवन्तु सुखिनः,<br />
-                <span className="hero-subtitle">सर्वे सन्तु निरामयाः</span>
-              </h1>
-              <p className="hero-description">
-                May all be happy, may all be free from disease
-              </p>
-              <div className="hero-actions">
-                <Link to="/products" className="btn-primary">View More</Link>
+            <div className="hero-left">
+              <div className="brand-icon">
+                <svg viewBox="0 0 100 100" className="lotus-icon">
+                  <path d="M50 10 L60 30 L80 30 L65 45 L70 65 L50 55 L30 65 L35 45 L20 30 L40 30 Z" fill="#2c5530"/>
+                  <circle cx="50" cy="50" r="8" fill="#2c5530"/>
+                </svg>
+              </div>
+              <div className="hero-text">
+                <p className="sanskrit-text-small">सर्वे भवन्तु सुखिनः,</p>
+                <h1 className="sanskrit-text-large">सर्वे सन्तु निरामयाः</h1>
+                <p className="english-translation">May all be happy, may all be free from disease</p>
+              </div>
+            </div>
+            <div className="hero-right">
+              <div className="capsule-container">
+                <div className="green-capsule">
+                  <div className="capsule-gradient"></div>
+                </div>
+                <div className="vines-flowers">
+                  <div className="vine vine-1"></div>
+                  <div className="vine vine-2"></div>
+                  <div className="flower flower-1">🌸</div>
+                  <div className="flower flower-2">🌸</div>
+                  <div className="flower flower-3">🌸</div>
+                </div>
               </div>
             </div>
           </div>
+          <div className="carousel-nav">
+            <button className="carousel-arrow carousel-prev">‹</button>
+            <button className="carousel-arrow carousel-next">›</button>
+          </div>
+        </div>
+        <div className="whatsapp-button">
+          <div className="whatsapp-icon">📱</div>
+          <span>WhatsApp us</span>
         </div>
       </section>
 

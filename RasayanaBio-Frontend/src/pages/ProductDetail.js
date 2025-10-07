@@ -9,7 +9,7 @@ import PackSelection from '../components/PackSelection';
 import WhatsAppButton from '../components/WhatsAppButton';
 import './ProductDetail.css';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'http://localhost:4000/api';
 
 const ProductDetail = () => {
   const { id } = useParams();

@@ -4,6 +4,7 @@
 import React, { memo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 import { usePopup } from '../context/PopupContext';
 import { formatPrice } from '../utils/currency';
 import ProductImage from './ProductImage';
@@ -11,6 +12,7 @@ import './ProductCard.css';
 
 const ProductCard = memo(({ product }) => {
   const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const { showSuccess, showError } = usePopup();
 
   const handleAddToCart = useCallback(async (e) => {
@@ -23,6 +25,22 @@ const ProductCard = memo(({ product }) => {
     }
   }, [addToCart, product.id, showSuccess, showError]);
 
+  const handleToggleWishlist = useCallback(async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await toggleWishlist(product);
+      const isInWishlistNow = isInWishlist(product.id);
+      if (isInWishlistNow) {
+        showSuccess('Removed from wishlist!', 'Success');
+      } else {
+        showSuccess('Added to wishlist!', 'Success');
+      }
+    } catch (error) {
+      showError('Error updating wishlist', 'Error');
+    }
+  }, [toggleWishlist, product, isInWishlist, showSuccess, showError]);
+
   return (
     <article className="product-card" data-testid={`product-card-${product.id}`}>
       {product.sale_price && (
@@ -30,6 +48,14 @@ const ProductCard = memo(({ product }) => {
           Sale
         </div>
       )}
+      
+      <button
+        className={`wishlist-btn ${isInWishlist(product.id) ? 'active' : ''}`}
+        onClick={handleToggleWishlist}
+        aria-label={`${isInWishlist(product.id) ? 'Remove from' : 'Add to'} wishlist`}
+      >
+        {isInWishlist(product.id) ? '♥' : '♡'}
+      </button>
       
       <Link to={`/products/${product.id}`} className="product-link" aria-label={`View ${product.name} details`}>
         <ProductImage 
