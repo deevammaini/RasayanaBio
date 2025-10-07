@@ -24,8 +24,34 @@
 }
 
 .logo-icon {
-  font-size: 2rem;
+  width: 40px;
+  height: 40px;
   margin-right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-logo {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 4px rgba(44, 85, 48, 0.1));
+  transition: all 0.3s ease;
+}
+
+.header-logo:hover {
+  transform: scale(1.1) rotate(1deg);
+  filter: drop-shadow(0 4px 8px rgba(44, 85, 48, 0.2));
+}
+
+/* Header logo subtle animation */
+@keyframes headerLogoPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.logo-icon {
+  animation: headerLogoPulse 6s ease-in-out infinite;
 }
 
 .logo h1 {

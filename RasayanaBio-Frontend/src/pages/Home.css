@@ -66,11 +66,31 @@
 .brand-icon {
   width: 80px;
   height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .lotus-icon {
   width: 100%;
   height: 100%;
+  filter: drop-shadow(0 4px 8px rgba(44, 85, 48, 0.15));
+  transition: all 0.3s ease;
+}
+
+.lotus-icon:hover {
+  transform: scale(1.05) rotate(2deg);
+  filter: drop-shadow(0 6px 12px rgba(44, 85, 48, 0.25));
+}
+
+/* Logo animation */
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-2px); }
+}
+
+.brand-icon {
+  animation: logoFloat 4s ease-in-out infinite;
 }
 
 .hero-text {
