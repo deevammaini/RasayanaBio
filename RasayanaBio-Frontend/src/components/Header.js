@@ -85,10 +85,35 @@ const Header = () => {
           </Link>
 
           <nav className={`nav ${mobileMenuOpen ? 'active' : ''}`}>
-            <Link to="/" onClick={() => setMobileMenuOpen(false)}>Home</Link>
-            <Link to="/products" onClick={() => setMobileMenuOpen(false)}>Products</Link>
-            <Link to="/about" onClick={() => setMobileMenuOpen(false)}>About</Link>
-            <Link to="/contact" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
+            <div className="nav-dropdown">
+              <Link to="/products" onClick={() => setMobileMenuOpen(false)}>
+                Shop By Category
+                <span className="dropdown-arrow">▼</span>
+              </Link>
+              <div className="dropdown-content">
+                <Link to="/products">All Products</Link>
+                <Link to="/products?category=Health Supplements">Health Supplements</Link>
+                <Link to="/products?category=Cosmetics">Cosmetics</Link>
+                <Link to="/products?category=Honey">Honey</Link>
+              </div>
+            </div>
+            <div className="nav-dropdown">
+              <Link to="/products" onClick={() => setMobileMenuOpen(false)}>
+                Shop by Health Benefit
+                <span className="dropdown-arrow">▼</span>
+              </Link>
+              <div className="dropdown-content">
+                <Link to="/products?benefit=Immunity Booster">Immunity Booster</Link>
+                <Link to="/products?benefit=Sleep Support">Sleep Support</Link>
+                <Link to="/products?benefit=Stress and Anxiety">Stress and Anxiety</Link>
+                <Link to="/products?benefit=Men's Health">Men's Health</Link>
+                <Link to="/products?benefit=Women's Health">Women's Health</Link>
+                <Link to="/products?benefit=Beauty & Radiance">Beauty & Radiance</Link>
+                <Link to="/products?benefit=Healthy Ageing">Healthy Ageing</Link>
+                <Link to="/products?benefit=Sports & Fitness">Sports & Fitness</Link>
+              </div>
+            </div>
+            <Link to="/about" onClick={() => setMobileMenuOpen(false)}>About Us</Link>
           </nav>
 
           <div className="header-actions">

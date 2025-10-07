@@ -12,7 +12,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;
-  color: #333;
+  color: #1f2937;
+  background-color: #ffffff;
 }
 
 code {
@@ -31,17 +32,20 @@ code {
   color: white;
   padding: 12px 24px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
   font-weight: 500;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(44, 85, 48, 0.2);
 }
 
 .btn-primary:hover {
-  background-color: #1e3a21;
+  background-color: #1f3f23;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(44, 85, 48, 0.3);
 }
 
 .btn-secondary {
