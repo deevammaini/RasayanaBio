@@ -601,12 +601,12 @@ const Checkout = () => {
                             />
                             <label htmlFor="phonepe" className="wallet-option-label">
                               <div className="wallet-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                  <rect width="24" height="24" rx="4" fill="#5F259F"/>
-                                  <path d="M8 6h8v2H8V6zm0 3h8v2H8V9zm0 3h5v2H8v-2z" fill="white"/>
-                                  <circle cx="18" cy="6" r="2" fill="#FF6B35"/>
-                                  <circle cx="18" cy="12" r="2" fill="#00D4AA"/>
-                                  <circle cx="18" cy="18" r="2" fill="#FFD23F"/>
+                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                                  <circle cx="16" cy="16" r="16" fill="#5F259F"/>
+                                  <path d="M10 8h12v3H10V8zm0 4h12v3H10v-3zm0 4h8v3H10v-3z" fill="white"/>
+                                  <circle cx="22" cy="8" r="2.5" fill="#FF6B35"/>
+                                  <circle cx="22" cy="16" r="2.5" fill="#00D4AA"/>
+                                  <circle cx="22" cy="24" r="2.5" fill="#FFD23F"/>
                                 </svg>
                               </div>
                               PhonePe
@@ -623,11 +623,10 @@ const Checkout = () => {
                             />
                             <label htmlFor="paytm" className="wallet-option-label">
                               <div className="wallet-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                  <rect width="24" height="24" rx="4" fill="#002970"/>
-                                  <path d="M6 8h12v2H6V8zm0 3h12v2H6v-2zm0 3h8v2H6v-2z" fill="white"/>
-                                  <circle cx="18" cy="7" r="1.5" fill="#00BAF2"/>
-                                  <path d="M16.5 16.5L18 18l3-3" stroke="#00BAF2" strokeWidth="1.5" fill="none"/>
+                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                                  <rect width="32" height="32" rx="6" fill="#002970"/>
+                                  <rect width="32" height="16" rx="6" fill="#00BAF2"/>
+                                  <text x="16" y="20" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold">Paytm</text>
                                 </svg>
                               </div>
                               Paytm
@@ -644,11 +643,14 @@ const Checkout = () => {
                             />
                             <label htmlFor="gpay" className="wallet-option-label">
                               <div className="wallet-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                  <rect width="24" height="24" rx="4" fill="#4285F4"/>
-                                  <path d="M12 4c-4.4 0-8 3.6-8 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 14c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6z" fill="white"/>
-                                  <path d="M12 6c-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm0 10c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z" fill="#4285F4"/>
-                                  <path d="M12 8c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" fill="white"/>
+                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                                  <rect width="32" height="32" rx="6" fill="#4285F4"/>
+                                  {/* Google Pay overlapping rectangles */}
+                                  <rect x="6" y="8" width="8" height="6" rx="2" fill="#EA4335"/>
+                                  <rect x="10" y="6" width="8" height="6" rx="2" fill="#FBBC04"/>
+                                  <rect x="14" y="8" width="8" height="6" rx="2" fill="#34A853"/>
+                                  <rect x="10" y="10" width="8" height="6" rx="2" fill="#4285F4"/>
+                                  <text x="16" y="26" textAnchor="middle" fill="white" fontSize="6" fontWeight="bold">G</text>
                                 </svg>
                               </div>
                               Google Pay

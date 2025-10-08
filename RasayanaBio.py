@@ -165,6 +165,15 @@ class ContactMessage(db.Model):
     status = db.Column(db.String(50), default='new')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+class Wishlist(db.Model):
+    __tablename__ = 'wishlists'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    user = db.relationship('User', backref='wishlist_items')
+    product = db.relationship('Product', backref='wishlist_items')
+
 # JWT Authentication Decorator
 def token_required(f):
     @wraps(f)
@@ -834,6 +843,122 @@ def contact():
     
     return jsonify({'message': 'Message sent successfully'}), 201
 
+# Wishlist Routes
+@app.route('/api/wishlist', methods=['GET'])
+@token_required
+def get_wishlist(current_user):
+    """Get user's wishlist"""
+    try:
+        wishlist_items = Wishlist.query.filter_by(user_id=current_user.id).all()
+        
+        wishlist_data = []
+        for item in wishlist_items:
+            product = item.product
+            wishlist_data.append({
+                'id': product.id,
+                'name': product.name,
+                'price': product.price,
+                'sale_price': product.sale_price,
+                'image_url': product.image_url,
+                'category': product.category,
+                'addedAt': item.created_at.isoformat()
+            })
+        
+        return jsonify({
+            'success': True,
+            'wishlist': wishlist_data
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': 'Error fetching wishlist'
+        }), 500
+
+@app.route('/api/wishlist/add', methods=['POST'])
+@token_required
+def add_to_wishlist(current_user):
+    """Add product to wishlist"""
+    try:
+        data = request.get_json()
+        product_id = data.get('product_id')
+        
+        if not product_id:
+            return jsonify({
+                'success': False,
+                'message': 'Product ID is required'
+            }), 400
+        
+        # Check if product exists
+        product = Product.query.get(product_id)
+        if not product:
+            return jsonify({
+                'success': False,
+                'message': 'Product not found'
+            }), 404
+        
+        # Check if already in wishlist
+        existing_item = Wishlist.query.filter_by(
+            user_id=current_user.id,
+            product_id=product_id
+        ).first()
+        
+        if existing_item:
+            return jsonify({
+                'success': False,
+                'message': 'Product already in wishlist'
+            }), 400
+        
+        # Add to wishlist
+        wishlist_item = Wishlist(
+            user_id=current_user.id,
+            product_id=product_id
+        )
+        
+        db.session.add(wishlist_item)
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Product added to wishlist'
+        }), 201
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': 'Error adding to wishlist'
+        }), 500
+
+@app.route('/api/wishlist/remove/<int:product_id>', methods=['DELETE'])
+@token_required
+def remove_from_wishlist(current_user, product_id):
+    """Remove product from wishlist"""
+    try:
+        wishlist_item = Wishlist.query.filter_by(
+            user_id=current_user.id,
+            product_id=product_id
+        ).first()
+        
+        if not wishlist_item:
+            return jsonify({
+                'success': False,
+                'message': 'Product not in wishlist'
+            }), 404
+        
+        db.session.delete(wishlist_item)
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Product removed from wishlist'
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': 'Error removing from wishlist'
+        }), 500
+
 # Helper Functions
 def calculate_pack_price(product, pack_size):
     """Calculate price based on pack size with discounts"""
@@ -1453,4 +1578,4 @@ def create_tables():
 if __name__ == '__main__':
     create_tables()
     seed_new_products()  # Add the new products
-    app.run(debug=True)
+    app.run(debug=True, port=4000)
