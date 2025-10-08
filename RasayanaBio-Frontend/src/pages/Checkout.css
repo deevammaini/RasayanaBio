@@ -177,6 +177,25 @@
   border-color: white;
 }
 
+/* Razorpay Payment Method Styling */
+.razorpay-label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.razorpay-icon {
+  font-size: 1.2rem;
+  margin-right: 8px;
+}
+
+.razorpay-subtitle {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  font-weight: 400;
+}
+
 /* Payment Method Required Indicator */
 .payment-method-required {
   margin-top: 1rem;

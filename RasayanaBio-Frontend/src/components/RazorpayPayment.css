@@ -1,0 +1,350 @@
+/* Razorpay Payment Modal Styles */
+.razorpay-payment-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 20px;
+}
+
+.razorpay-payment-content {
+  background: white;
+  border-radius: 20px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideInUp 0.3s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.payment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 0;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 24px;
+}
+
+.payment-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c5530;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.payment-amount {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  margin-bottom: 32px;
+}
+
+.amount-label {
+  font-size: 1.1rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.amount-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c5530;
+}
+
+.payment-methods-section {
+  padding: 0 24px;
+  margin-bottom: 32px;
+}
+
+.payment-methods-section h4 {
+  margin: 0 0 16px 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.payment-methods-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.payment-method-card {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.payment-method-card:hover {
+  border-color: #2c5530;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(44, 85, 48, 0.1);
+}
+
+.payment-method-card.selected {
+  border-color: #2c5530;
+  background: linear-gradient(135deg, #2c5530 0%, #4a7c59 100%);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(44, 85, 48, 0.3);
+}
+
+.method-icon {
+  font-size: 2rem;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: rgba(44, 85, 48, 0.1);
+  border-radius: 12px;
+}
+
+.payment-method-card.selected .method-icon {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.method-info h5 {
+  margin: 0 0 4px 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.method-info p {
+  margin: 0;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.bank-selection {
+  padding: 0 24px;
+  margin-bottom: 32px;
+}
+
+.bank-selection h4 {
+  margin: 0 0 16px 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.banks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.bank-card {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.bank-card:hover {
+  border-color: #2c5530;
+  background: #f8fafc;
+}
+
+.bank-card.selected {
+  border-color: #2c5530;
+  background: linear-gradient(135deg, #2c5530 0%, #4a7c59 100%);
+  color: white;
+}
+
+.bank-icon {
+  font-size: 1.2rem;
+  margin-right: 8px;
+}
+
+.bank-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.payment-actions {
+  padding: 0 24px 24px;
+}
+
+.pay-now-btn {
+  width: 100%;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #2c5530 0%, #4a7c59 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(44, 85, 48, 0.3);
+}
+
+.pay-now-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(44, 85, 48, 0.4);
+}
+
+.pay-now-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.payment-security {
+  padding: 24px;
+  background: #f8fafc;
+  border-radius: 0 0 20px 20px;
+  text-align: center;
+}
+
+.security-badges {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.security-badge {
+  font-size: 0.9rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.security-text {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .razorpay-payment-modal {
+    padding: 10px;
+  }
+  
+  .razorpay-payment-content {
+    border-radius: 16px;
+  }
+  
+  .payment-header {
+    padding: 20px 20px 0;
+  }
+  
+  .payment-header h3 {
+    font-size: 1.3rem;
+  }
+  
+  .payment-amount {
+    padding: 0 20px;
+    margin-bottom: 24px;
+  }
+  
+  .amount-value {
+    font-size: 1.8rem;
+  }
+  
+  .payment-methods-section,
+  .bank-selection {
+    padding: 0 20px;
+    margin-bottom: 24px;
+  }
+  
+  .payment-methods-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .banks-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+  
+  .payment-actions {
+    padding: 0 20px 20px;
+  }
+  
+  .payment-security {
+    padding: 20px;
+  }
+  
+  .security-badges {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-method-card {
+    padding: 12px;
+  }
+  
+  .method-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+  }
+  
+  .method-info h5 {
+    font-size: 0.9rem;
+  }
+  
+  .method-info p {
+    font-size: 0.8rem;
+  }
+  
+  .bank-card {
+    padding: 10px;
+  }
+  
+  .bank-name {
+    font-size: 0.8rem;
+  }
+}

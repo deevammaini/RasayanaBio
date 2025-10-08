@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { usePopup } from '../context/PopupContext';
 import { formatPrice } from '../utils/currency';
 import axios from 'axios';
+import RazorpayPayment from '../components/RazorpayPayment';
 import './Checkout.css';
 
 const Checkout = () => {
@@ -18,6 +19,7 @@ const Checkout = () => {
   const [couponMessage, setCouponMessage] = useState('');
   const [couponLoading, setCouponLoading] = useState(false);
   const [availableCoupons, setAvailableCoupons] = useState([]);
+  const [showRazorpayModal, setShowRazorpayModal] = useState(false);
   
   // Form data
   const [formData, setFormData] = useState({
@@ -201,6 +203,12 @@ const Checkout = () => {
       return;
     }
 
+    // If Razorpay is selected, show the modal
+    if (formData.paymentMethod === 'razorpay') {
+      setShowRazorpayModal(true);
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -236,6 +244,49 @@ const Checkout = () => {
     }
 
     setLoading(false);
+  };
+
+  const handleRazorpaySuccess = async (paymentData) => {
+    try {
+      // Create order with Razorpay payment details
+      const orderData = {
+        shipping_address: formData.shippingAddress,
+        billing_address: formData.billingAddress || formData.shippingAddress,
+        payment_method: 'razorpay',
+        payment_details: {
+          razorpay_payment_id: paymentData.id,
+          razorpay_order_id: paymentData.order_id,
+          razorpay_signature: paymentData.signature,
+          method: paymentData.method
+        }
+      };
+      
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        'http://localhost:4000/api/orders',
+        orderData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      if (response.data.success) {
+        showSuccess('Payment successful! Order placed successfully!');
+        clearCart();
+        setShowRazorpayModal(false);
+        navigate(`/orders/${response.data.order_id}`);
+      }
+    } catch (error) {
+      console.error('Error processing Razorpay payment:', error);
+      showError('Payment successful but order creation failed. Please contact support.');
+    }
+  };
+
+  const handleRazorpayError = (error) => {
+    showError(error || 'Payment failed. Please try again.');
+    setShowRazorpayModal(false);
+  };
+
+  const handleRazorpayClose = () => {
+    setShowRazorpayModal(false);
   };
 
   // Generate UPI payment link via backend (for reliable deep links on mobile)
@@ -408,6 +459,24 @@ const Checkout = () => {
                     />
                     <label htmlFor="card" className="payment-method-label">
                       Credit/Debit Card
+                    </label>
+                  </div>
+                  
+                  <div className="payment-method">
+                    <input
+                      type="radio"
+                      id="razorpay"
+                      name="paymentMethod"
+                      value="razorpay"
+                      checked={formData.paymentMethod === 'razorpay'}
+                      onChange={() => handlePaymentMethodChange('razorpay')}
+                    />
+                    <label htmlFor="razorpay" className="payment-method-label">
+                      <div className="razorpay-label">
+                        <span className="razorpay-icon">💳</span>
+                        <span>Razorpay Gateway</span>
+                        <span className="razorpay-subtitle">Cards, UPI, Net Banking & More</span>
+                      </div>
                     </label>
                   </div>
                   
@@ -812,6 +881,16 @@ const Checkout = () => {
           </div>
         </div>
       </div>
+      
+      {/* Razorpay Payment Modal */}
+      {showRazorpayModal && (
+        <RazorpayPayment
+          amount={cartSummary.total}
+          onSuccess={handleRazorpaySuccess}
+          onError={handleRazorpayError}
+          onClose={handleRazorpayClose}
+        />
+      )}
     </div>
   );
 };
